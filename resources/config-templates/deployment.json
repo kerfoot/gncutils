@@ -1,0 +1,19 @@
+{
+    "glider": " ",
+    "trajectory_datetime": " ",
+    "trajectory_name": "cp05moas-gl339-D00004",
+    "global_attributes": {
+        "wmo_id": " ",
+        "deployment_number" : -1,
+        "ooi_platform_id" : " "
+    },
+    "platform": {
+        "type": "platform",
+        "id": " ",
+        "wmo_id": " ",
+        "long_name": "Slocum G2 Glider GLIDER_NAME",
+        "comment": " ",
+        "instrument": " ",
+        "type": "platform"
+    }
+}
