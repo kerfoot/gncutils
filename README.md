@@ -4,10 +4,14 @@ A python package for writing trajectory and profile-based NetCDF files from nati
 
 Full documentation available at the [wiki](https://github.com/kerfoot/gncutils/wiki)
 
+# Requirements
++ Python 3.*
+
 # Installation
 
     > git clone https://github.com/kerfoot/gncutils.git
-    > pip install -r ./gncutils/requirements.txt
+    > cd gncutils
+    > conda env create -f environment.yml
 
 # This repo is still under development
 
