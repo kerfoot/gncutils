@@ -75,7 +75,7 @@ class TrajectoryNetCDFWriter(object):
             raise FileNotFoundError(
                 'Deployment instruments configuration file not found: {:s}'.format(self._instruments_config_path))
         # Deployment specific sensor definitions configuration path
-        self._sensor_defs_config_path = os.path.join(config_path, 'trajectory-sensor_defs.json')
+        self._sensor_defs_config_path = os.path.join(config_path, 'sensor_defs.json')
         if not os.path.isfile(self._sensor_defs_config_path):
             raise FileNotFoundError('Sensor definitions file not found: {:s}'.format(self._sensor_defs_config_path))
 
@@ -110,6 +110,22 @@ class TrajectoryNetCDFWriter(object):
 
         # Output NetCDF file name
         self._out_nc = None
+
+    @property
+    def deployment_config_file(self):
+        return self._deployment_config_path
+
+    @property
+    def global_attributes_file(self):
+        return self._global_attributes_path
+
+    @property
+    def instruments_config_file(self):
+        return self._instruments_config_path
+
+    @property
+    def sensor_defs_file(self):
+        return self._sensor_defs_config_path
 
     @property
     def nc(self):
@@ -242,6 +258,11 @@ class TrajectoryNetCDFWriter(object):
     def nc_sensor_defs(self):
 
         return self._nc_sensor_defs
+
+    @property
+    def config_sensor_defs(self):
+
+        return self._config_sensor_defs
 
     @property
     def attributes(self):
@@ -591,7 +612,7 @@ class TrajectoryNetCDFWriter(object):
                 description['attrs']
             )
 
-    def set_trajectory_id(self, trajectory_string):
+    def set_trajectory_id(self):
         """ Sets or updates the trajectory dimension and variable for the dataset 
         and the global id attribute
 
@@ -603,7 +624,7 @@ class TrajectoryNetCDFWriter(object):
 
         if 'trajectory' not in self._nc.variables:
             # Setup Trajectory Dimension
-            self._nc.createDimension('traj_strlen', len(trajectory_string))
+            self._nc.createDimension('traj_strlen', len(self._trajectory))
 
             # Setup Trajectory Variable
             trajectory_var = self._nc.createVariable(
@@ -625,10 +646,10 @@ class TrajectoryNetCDFWriter(object):
             trajectory_var = self._nc.variables['trajectory']
 
         # Set the trajectory variable data
-        trajectory_var[:] = stringtoarr(trajectory_string, len(trajectory_string))
+        trajectory_var[:] = stringtoarr(self._trajectory, len(self._trajectory))
 
         if not self._nc.getncattr('id').strip():
-            self._nc.id = trajectory_string  # Global id variable
+            self._nc.id = self._trajectory  # Global id variable
 
     def set_source_file_var(self, source_file_string, attrs=None):
         """ Sets the trajectory dimension and variable for the dataset and the

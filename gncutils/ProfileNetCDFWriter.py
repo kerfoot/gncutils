@@ -16,9 +16,9 @@ class ProfileNetCDFWriter(TrajectoryNetCDFWriter):
         self._nc_sensor_defs = {}
 
         # Deployment specific sensor definitions configuration path
-        self._sensor_defs_config_path = os.path.join(config_path, 'profile-sensor_defs.json')
-        if not os.path.isfile(self._sensor_defs_config_path):
-            raise FileNotFoundError('Sensor definitions file not found: {:s}'.format(self._sensor_defs_config_path))
+        # self._sensor_defs_config_path = os.path.join(config_path, 'profile-sensor_defs.json')
+        # if not os.path.isfile(self._sensor_defs_config_path):
+        #     raise FileNotFoundError('Sensor definitions file not found: {:s}'.format(self._sensor_defs_config_path))
 
         # Need to reset the config_path to trigger reading of profile-based sensor definitions from self._sensor_defs_
         # config_path
