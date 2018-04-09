@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-from gsw.gibbs.practical_salinity import SP_from_C
-from gsw.gibbs.conversions import SA_from_SP, CT_from_t
-from gsw.gibbs.density_enthalpy_48 import rho
+from gsw import SP_from_C, SA_from_SP, CT_from_t, rho, z_from_p
 
 
 def create_practical_salinity_sensor(reader):
@@ -27,7 +25,7 @@ def calculate_practical_salinity(conductivity, temperature, pressure):
     """
 
     # Convert S/m to mS/cm
-    ms_conductivity = conductivity * 1000
+    ms_conductivity = conductivity * 10
 
     return SP_from_C(
         ms_conductivity,
@@ -44,23 +42,18 @@ def calculate_density(timestamps,
 
     Parameters:
         timestamps (UNIX epoch),
-        temperature (C), pressure (bar), salinity (psu PSS-78),
+        temperature (C), pressure (dbar), salinity (psu PSS-78),
         latitude (decimal degrees), longitude (decimal degrees)
 
     Returns:
         density (kg/m**3),
-        absolute salinity(g/kg), conservative temperature (C)
     """
 
-    validate_glider_args(timestamps,
-                         temperature, pressure, salinity,
-                         latitude, longitude)
-
-    dBar_pressure = pressure * 10
+    # dBar_pressure = pressure * 10
 
     absolute_salinity = SA_from_SP(
         salinity,
-        dBar_pressure,
+        pressure,
         longitude,
         latitude
     )
@@ -68,13 +61,20 @@ def calculate_density(timestamps,
     conservative_temperature = CT_from_t(
         absolute_salinity,
         temperature,
-        dBar_pressure
+        pressure
     )
 
     density = rho(
         absolute_salinity,
         conservative_temperature,
-        dBar_pressure
+        pressure
     )
 
     return density
+
+
+def calculate_depth(pressure, latitude):
+
+    return z_from_p(pressure, latitude)
+
+
