@@ -40,3 +40,12 @@ SLOCUM_TEMPERATURE_SENSORS = ['sci_water_temp',
 
 SLOCUM_SALINITY_SENSORS = ['sci_water_cond',
                            'm_water_cond']
+
+LLAT_SENSORS = ['llat_time',
+                'llat_pressure',
+                'llat_latitude',
+                'llat_longitude',
+                'llat_depth']
+
+NGDAC_VAR_NAMES = ['time', 'depth', 'pressure', 'temperature', 'conductivity', 'salinity', 'density', 'profile_time',
+                   'profile_id', 'profile_lat', 'profile_lon', 'latitude', 'longitude']
