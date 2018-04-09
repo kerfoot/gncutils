@@ -9,7 +9,7 @@ import datetime
 import shutil
 from gncutils.ProfileNetCDFWriter import ProfileNetCDFWriter
 from gncutils.readers.dba import create_llat_dba_reader
-from gncutils.yo import build_dba_yo, find_profiles
+from gncutils.yo import build_yo, find_profiles
 from gncutils.constants import NETCDF_FORMATS
 import numpy as np
 
@@ -76,7 +76,7 @@ def main(args):
             continue
 
         # Create the yo for profile indexing find the profile minima/maxima
-        yo = build_dba_yo(dba)
+        yo = build_yo(dba)
         if yo is None:
             continue
         try:
@@ -147,7 +147,7 @@ def main(args):
 
             # Create and set the trajectory
             trajectory_string = '{:s}'.format(ncw.trajectory)
-            ncw.set_trajectory_id(trajectory_string)
+            ncw.set_trajectory_id()
             # Update the global title attribute with the name of the source dba file
             ncw.set_title('{:s}-{:s} Vertical Profile'.format(ncw.deployment_configs['glider'],
                                                               pro_mean_dt.strftime('%Y%m%d%H%M%SZ')))
