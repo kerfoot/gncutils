@@ -314,6 +314,7 @@ def select_time_sensor(dba, timesensor=None):
                 time_sensor['attrs']['comment'] = u'Alias for {:s}'.format(t)
                 break
 
+    time_sensor['attrs']['units'] = 'seconds since 1970-01-01 00:00:00Z'
     if not time_sensor:
         return
 
@@ -359,6 +360,7 @@ def select_pressure_sensor(dba, pressuresensor=None):
 
     # Add the sensor data to pressure_sensor
     pressure_sensor['data'] = np.expand_dims(dba['data'][:, c] * 10, 1)
+    pressure_sensor['attrs']['units'] = 'dbar'
 
     return pressure_sensor
 
