@@ -89,7 +89,7 @@ def main(args):
 
         # Parse the dba file
         dba = create_llat_dba_reader(dba_file)
-        if len(dba['data']) == 0:
+        if dba is None or len(dba['data']) == 0:
             logging.warning('Skipping empty dba file: {:s}'.format(dba_file))
             continue
 

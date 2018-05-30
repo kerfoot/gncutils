@@ -131,7 +131,13 @@ def find_yo_extrema(timestamps, depth, tsint=10):
 
     # Create the fixed timestamp array from the min timestamp to the max timestamp
     # spaced by tsint intervals
-    ts = np.arange(est_data[:, 0].min(), est_data[:, 0].max(), tsint)
+    min_ts = est_data[:, 0].min()
+    max_ts = est_data[:, 0].max()
+    if max_ts - min_ts < tsint:
+        logger.warning('Not enough timestamps for yo interpolation')
+        return np.empty((0, 2))
+    
+    ts = np.arange(min_ts, max_ts, tsint)
     # Stretch estimated values for interpolation to span entire dataset
     interp_z = np.interp(
         ts,

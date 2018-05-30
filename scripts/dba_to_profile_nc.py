@@ -20,7 +20,7 @@ def main(args):
 
     # Set up logger
     log_level = getattr(logging, args.loglevel.upper())
-    log_format = '%(module)s:%(levelname)s:%(message)s [line %(lineno)d]'
+    log_format = '%(asctime)s:%(module)s:%(levelname)s:%(message)s [line %(lineno)d]'
     logging.basicConfig(format=log_format, level=log_level)
 
     config_path = args.config_path
@@ -71,7 +71,7 @@ def main(args):
 
         # Parse the dba file
         dba = create_llat_dba_reader(dba_file)
-        if len(dba['data']) == 0:
+        if dba is None or len(dba['data']) == 0:
             logging.warning('Skipping empty dba file: {:s}'.format(dba_file))
             continue
 
@@ -85,8 +85,8 @@ def main(args):
             logging.error('{:s}: {:s}'.format(dba_file, e))
             continue
 
+        logging.info('{:0.0f} profiles indexed'.format(len(profile_times)))
         if len(profile_times) == 0:
-            logging.info('No profiles indexed: {:s}'.format(dba_file))
             continue
 
         # All timestamps from stream
