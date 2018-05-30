@@ -1,0 +1,20 @@
+dbd_label: DBD_ASC(dinkum_binary_data_ascii)file
+encoding_ver: 2
+num_ascii_tags: 14
+all_sensors: 0
+filename: ru29-2017-143-0-115-sf
+the8x3_filename: 02550115
+filename_extension: dbd
+filename_label: ru29-2017-143-0-115-dbd(02550115)
+mission_name: 1K_N.MI
+fileopen_time: Sun_Jun_11_08:04:29_2017
+sensors_per_cycle: 43
+num_label_lines: 3
+num_segments: 1
+segment_filename_0: ru29-2017-143-0-115
+c_fin c_heading c_pitch c_roll c_wpt_lat c_wpt_lon m_altitude m_appear_to_be_at_surface m_coulomb_amphr m_depth m_fin m_final_water_vx m_final_water_vy m_gps_full_status m_gps_lat m_gps_lon m_gps_status m_heading m_iridium_call_num m_iridium_redials m_iridium_signal_strength m_lat m_lon m_pitch m_present_time m_pressure m_roll m_science_clothesline_lag m_vacuum m_water_depth m_water_vx m_water_vy gld_dup_sci_ctd41cp_timestamp gld_dup_sci_m_present_time gld_dup_sci_water_cond gld_dup_sci_water_pressure gld_dup_sci_water_temp x_software_ver sci_ctd41cp_timestamp sci_m_present_time sci_water_cond sci_water_pressure sci_water_temp 
+rad rad rad rad lat lon m bool amp-hrs m rad m/s m/s enum lat lon enum rad nodim nodim nodim lat lon rad timestamp bar rad s inHg m m/s m/s timestamp timestamp S/m bar degC nodim timestamp timestamp s/m bar degc 
+4 4 4 4 8 8 4 1 4 4 4 4 4 1 8 8 1 4 4 4 4 8 8 4 8 4 4 4 4 4 4 4 8 8 4 4 4 4 8 8 4 4 4 
+NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 1497168242.5549 NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 0 1497168242.5549 0 0 0 
+0 4.90756 0.523599 0 0 8500 0 0 277.692 0.463744 0.00558291 0.030363 -0.0455013 7 -0.8453 8714.5708 0 4.4855 4209 1 5 -0.845299999867165 8714.5708 0.466003 1497168249.81812 0.0463744 0.0122173 1.47943 8.14642 -1 0.0219173 -0.0166374 0 1497168252.34442 3 0.223 10 7.2 NaN NaN NaN NaN NaN 
+NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 1497168251.6337 NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN 0 1497168251.6337 0 0 0 

@@ -1,0 +1,17 @@
+{
+    "glider": "ru29",
+    "global_attributes": {
+        "deployment": "ru29-20161105T0131",
+        "wmo_id": "5801907"
+    },
+    "platform": {
+        "comment": " ",
+        "id": "ru29",
+        "instruments": "instrument_ctd",
+        "long_name": "Slocum Glider ru29",
+        "type": "platform",
+        "wmo_id": "5801907"
+    },
+    "trajectory_datetime": " ",
+    "trajectory_name": "ru29-20161105T0131"
+}

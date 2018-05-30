@@ -1,0 +1,18 @@
+[
+    {
+        "attrs": {
+            "calibration_date": " ",
+            "calibration_report": "",
+            "comment": "Scientific Payload Instrument ctd-98",
+            "factory_calibrated": " ",
+            "long_name": "Scientific Payload Instrument ctd-98",
+            "make_model": "Seabird-Scientific GPCTD",
+            "platform": "platform",
+            "serial_number": "98",
+            "type": "instrument",
+            "user_calibrated": ""
+        },
+        "nc_var_name": "instrument_ctd",
+        "type": "i4"
+    }
+]
