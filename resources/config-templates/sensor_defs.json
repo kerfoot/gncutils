@@ -1,0 +1,267 @@
+{
+    "llat_time": {
+        "attrs": {
+            "axis": "T",
+            "calendar": "gregorian",
+            "standard_name": "time",
+            "units": "seconds since 1970-01-01T00:00:00Z",
+            "valid_max": 2147483647,
+            "valid_min": 0
+        },
+        "dimension": "time",
+        "is_dimension": true,
+        "dimension_length": null,
+        "nc_var_name": "time",
+        "type": "f8"
+    },
+    "llat_pressure": {
+        "attrs": {
+            "axis": "Z",
+            "long_name": "CTD Pressure",
+            "observation_type": "measured",
+            "positive": "down",
+            "reference_datum": "sea-surface",
+            "standard_name": "sea_water_pressure",
+            "platform": "platform",
+            "units": "bar",
+            "instrument": "instrument_ctd",
+            "valid_max": 2000.0,
+            "valid_min": 0.0,
+            "accuracy": 0.01,
+            "ancillary_variables": " ",
+            "resolution": 0.01,
+            "precision": 0.01
+        },
+        "dimension": "time",
+        "nc_var_name": "pressure",
+        "type": "f8"
+    },
+    "llat_depth": {
+        "attrs": {
+            "axis": "Z",
+            "long_name": "CTD Depth",
+            "instrument": "instrument_ctd",
+            "observation_type": "calculated",
+            "positive": "down",
+            "reference_datum": "sea-surface",
+            "standard_name": "sea_water_depth",
+            "platform": "platform",
+            "units": "meters",
+            "valid_max": 2000.0,
+            "valid_min": 0.0,
+            "accuracy": 0.01,
+            "ancillary_variables": " ",
+            "resolution": 0.01,
+            "precision": 0.01
+        },
+        "dimension": "time",
+        "nc_var_name": "depth",
+        "type": "f8"
+    },
+    "llat_latitude": {
+        "nc_var_name": "lat",
+        "type": "f8",
+        "dimension": "time",
+        "attrs": {
+            "ancillary_variables": " ",
+            "coordinate_reference_frame": "urn:ogc:crs:EPSG::4326",
+            "reference": "WGS84",
+            "platform": "platform",
+            "units": "degree_north",
+            "precision": 5,
+            "axis": "Y",
+            "observation_type": "calculated",
+            "long_name": "Latitude",
+            "valid_min": -90.0,
+            "valid_max": 90.0,
+            "standard_name": "latitude"
+        }
+    },
+    "llat_longitude": {
+        "nc_var_name": "lon",
+        "type": "f8",
+        "dimension": "time",
+        "attrs": {
+            "ancillary_variables": " ",
+            "coordinate_reference_frame": "urn:ogc:crs:EPSG::4326",
+            "reference": "WGS84",
+            "platform": "platform",
+            "units": "degree_east",
+            "precision": 5,
+            "axis": "X",
+            "observation_type": "calculated",
+            "long_name": "Longitude",
+            "valid_min": -180.0,
+            "valid_max": 180.0,
+            "standard_name": "longitude"
+        }
+    },
+    "crs": {
+        "nc_var_name": "crs",
+        "dimension": null,
+        "type": "i4",
+        "attrs": {
+            "epsg_code": "EPSG:4326",
+            "grid_mapping_name": "latitude_longitude",
+            "inverse_flattening": 298.257223563,
+            "long_name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+            "semi_major_axis": 6378137.0
+        }
+    },
+    "platform": {
+        "nc_var_name": "platform",
+        "dimension": null,
+        "type": "i4",
+        "attrs": {
+            "ancillary_variables": " "
+        }
+    },
+    "profile_id": {
+        "dimension": null,
+        "nc_var_name": "profile_id",
+        "type": "f8",
+        "attrs": {
+            "ancillary_variables": "profile_time",
+            "comment": "Unique identifier of the profile. The profile ID is the mean profile timestamp",
+            "long_name": "Profile ID",
+            "valid_min": 1,
+            "valid_max": 2147483647
+        }
+    },
+    "profile_time": {
+        "dimension": null,
+        "nc_var_name": "profile_time",
+        "type": "f8",
+        "attrs": {
+            "axis": "T",
+            "calendar": "gregorian",
+            "comment": "Timestamp corresponding to the mid-point of the profile",
+            "long_name": "Profile Center Time",
+            "observation_type": "calculated",
+            "standard_name": "time",
+            "units": "seconds since 1970-01-01T00:00:00Z",
+            "valid_max": 2147483647,
+            "valid_min": 0
+        }
+    },
+    "profile_lat": {
+        "nc_var_name": "profile_lat",
+        "type": "f8",
+        "dimension": null,
+        "attrs": {
+            "comment": "Value is interpolated to provide an estimate of the latitude at the mid-point of the profile",
+            "units": "degree_north",
+            "precision": 5,
+            "axis": "Y",
+            "observation_type": "calculated",
+            "long_name": "Profile Center Latitude",
+            "valid_min": -90.0,
+            "valid_max": 90.0,
+            "standard_name": "latitude"
+        }
+    },
+    "profile_lon": {
+        "nc_var_name": "profile_lon",
+        "type": "f8",
+        "dimension": null,
+        "attrs": {
+            "comment": "Value is interpolated to provide an estimate of the longitude at the mid-point of the profile",
+            "units": "degree_east",
+            "precision": 5,
+            "axis": "X",
+            "observation_type": "calculated",
+            "long_name": "Profile Center Longitude",
+            "valid_min": -180.0,
+            "valid_max": 180.0,
+            "standard_name": "longitude"
+        }
+    },
+    "m_altitude": {
+        "attrs": {
+            "bytes": 4,
+            "sensor": "m_altitude",
+            "type": "f8",
+            "units": "m",
+            "standard_name": "sea_floor_depth_below_sea_surface",
+            "long_name": "Measured Water Depth"
+        },
+        "dimension": "time",
+        "nc_var_name": "water_depth",
+        "type": "f8"
+    },
+    "sci_water_cond": {
+        "attrs": {
+            "accuracy": 0.001,
+            "ancillary_variables": " ",
+            "resolution": 1e-05,
+            "precision": 1e-05,
+            "instrument": "instrument_ctd",
+            "platform": "platform",
+            "observation_type": "measured",
+            "standard_name": "sea_water_electrical_conductivity",
+            "units": "S m-1",
+            "valid_max": 10.0,
+            "valid_min": 0.0
+        },
+        "dimension": "time",
+        "nc_var_name": "conductivity",
+        "type": "f8"
+    },
+    "sci_water_temp": {
+        "attrs": {
+            "accuracy": 0.004,
+            "ancillary_variables": " ",
+            "instrument": "instrument_ctd",
+            "long_name": "Temperature",
+            "observation_type": "measured",
+            "platform": "platform",
+            "precision": 0.001,
+            "resolution": 0.001,
+            "standard_name": "sea_water_temperature",
+            "units": "Celsius",
+            "valid_max": 40.0,
+            "valid_min": -5.0
+        },
+        "dimension": "time",
+        "nc_var_name": "temperature",
+        "type": "f8"
+    },
+    "salinity": {
+        "attrs": {
+            "accuracy": " ",
+            "ancillary_variables": " ",
+            "instrument": "instrument_ctd",
+            "long_name": "Salinity",
+            "observation_type": "calculated",
+            "platform": "platform",
+            "precision": " ",
+            "resolution": " ",
+            "standard_name": "sea_water_practical_salinity",
+            "units": "1",
+            "valid_max": 40.0,
+            "valid_min": 0.0
+        },
+        "dimension": "time",
+        "nc_var_name": "salinity",
+        "type": "f8"
+    },
+    "density": {
+        "attrs": {
+            "accuracy": " ",
+            "ancillary_variables": " ",
+            "instrument": "instrument_ctd",
+            "long_name": "Density",
+            "observation_type": "calculated",
+            "platform": "platform",
+            "precision": " ",
+            "resolution": " ",
+            "standard_name": "sea_water_density",
+            "units": "kg m-3",
+            "valid_max": 1040.0,
+            "valid_min": 1015.0
+        },
+        "dimension": "time",
+        "nc_var_name": "density",
+        "type": "f8"
+    }
+}
