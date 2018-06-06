@@ -48,4 +48,4 @@ LLAT_SENSORS = ['llat_time',
                 'llat_depth']
 
 NGDAC_VAR_NAMES = ['time', 'depth', 'pressure', 'temperature', 'conductivity', 'salinity', 'density', 'profile_time',
-                   'profile_id', 'profile_lat', 'profile_lon', 'latitude', 'longitude']
+                   'profile_id', 'profile_lat', 'profile_lon', 'lat', 'lon']
