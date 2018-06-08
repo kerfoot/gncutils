@@ -295,6 +295,9 @@ class TrajectoryNetCDFWriter(object):
 
             self.set_scalar(container_variable)
             for k, v in sorted(self.nc_sensor_defs[container_variable]['attrs'].items()):
+                if k.lower() == '_fillvalue':
+                    self._logger.info('Skipping _FillValue')
+                    continue
                 self._nc.variables[container_variable].setncattr(k, v)
 
     def init_nc(self, out_nc):
@@ -577,19 +580,33 @@ class TrajectoryNetCDFWriter(object):
         else:
             dimension = (desc['dimension'],)
 
+        if 'attrs' not in desc:
+            desc['attrs'] = {}
+
+        # Check for user-specified _FillValue or missing_value
+        var_fill_value = NC_FILL_VALUES[desc['type']]
+        if '_FillValue' in desc['attrs'] and desc['attrs']['_FillValue']:
+            var_fill_value = desc['attrs']['_FillValue']
+        elif 'missing_value' in desc['attrs'] and desc['attrs']['missing_value']:
+            var_fill_value = desc['attrs']['missing_value']
+
         datatype = self._nc.createVariable(
             desc['nc_var_name'],
             desc['type'],
             dimensions=dimension,
             zlib=True,
             complevel=self._comp_level,
-            fill_value=NC_FILL_VALUES[desc['type']]
+            fill_value=var_fill_value
         )
 
         # Add an attribute to note the variable name used in the source data file
         if 'long_name' not in desc['attrs'] or not desc['attrs']['long_name'].strip():
             desc['attrs']['long_name'] = key
         for k, v in sorted(desc['attrs'].items()):
+            # self._logger.info('Setting attribute {:s}:{:s}'.format(desc['nc_var_name'], k))
+            if k.lower() == '_fillvalue':
+                self._logger.info('Skipping _FillValue')
+                continue
             datatype.setncattr(k, v)
 
     def set_scalar(self, key, value=None):
@@ -708,8 +725,8 @@ class TrajectoryNetCDFWriter(object):
             self._logger.warning('No _FillValue (type key) found for {:s}'.format(var_name))
             return
 
-        # Replace nan with the datatype['type'] fill value
-        np.place(var_data, np.isnan(var_data), fill_value)
+        # # Replace nan with the datatype['type'] fill value
+        # np.place(var_data, np.isnan(var_data), fill_value)
 
         # Add the variable data
         self._nc.variables[datatype['nc_var_name']][:] = var_data

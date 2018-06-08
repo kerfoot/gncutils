@@ -6,7 +6,8 @@
             "standard_name": "time",
             "units": "seconds since 1970-01-01T00:00:00Z",
             "valid_max": 2147483647,
-            "valid_min": 0
+            "valid_min": 0,
+            "_FillValue": NaN
         },
         "dimension": "time",
         "is_dimension": true,
@@ -30,7 +31,8 @@
             "accuracy": 0.01,
             "ancillary_variables": " ",
             "resolution": 0.01,
-            "precision": 0.01
+            "precision": 0.01,
+            "_FillValue": NaN
         },
         "dimension": "time",
         "nc_var_name": "pressure",
@@ -38,6 +40,7 @@
     },
     "llat_depth": {
         "attrs": {
+            "_FillValue": NaN,
             "axis": "Z",
             "long_name": "CTD Depth",
             "instrument": "instrument_ctd",
@@ -63,6 +66,7 @@
         "type": "f8",
         "dimension": "time",
         "attrs": {
+            "_FillValue": NaN,
             "ancillary_variables": " ",
             "coordinate_reference_frame": "urn:ogc:crs:EPSG::4326",
             "reference": "WGS84",
@@ -82,6 +86,7 @@
         "type": "f8",
         "dimension": "time",
         "attrs": {
+            "_FillValue": NaN,
             "ancillary_variables": " ",
             "coordinate_reference_frame": "urn:ogc:crs:EPSG::4326",
             "reference": "WGS84",
@@ -121,6 +126,7 @@
         "nc_var_name": "profile_id",
         "type": "f8",
         "attrs": {
+            "_FillValue": NaN,
             "ancillary_variables": "profile_time",
             "comment": "Unique identifier of the profile. The profile ID is the mean profile timestamp",
             "long_name": "Profile ID",
@@ -133,6 +139,7 @@
         "nc_var_name": "profile_time",
         "type": "f8",
         "attrs": {
+            "_FillValue": NaN,
             "axis": "T",
             "calendar": "gregorian",
             "comment": "Timestamp corresponding to the mid-point of the profile",
@@ -149,6 +156,7 @@
         "type": "f8",
         "dimension": null,
         "attrs": {
+            "_FillValue": NaN,
             "comment": "Value is interpolated to provide an estimate of the latitude at the mid-point of the profile",
             "units": "degree_north",
             "precision": 5,
@@ -165,6 +173,7 @@
         "type": "f8",
         "dimension": null,
         "attrs": {
+            "_FillValue": NaN,
             "comment": "Value is interpolated to provide an estimate of the longitude at the mid-point of the profile",
             "units": "degree_east",
             "precision": 5,
@@ -178,6 +187,7 @@
     },
     "m_altitude": {
         "attrs": {
+            "_FillValue": NaN,
             "bytes": 4,
             "sensor": "m_altitude",
             "type": "f8",
@@ -191,6 +201,7 @@
     },
     "sci_water_cond": {
         "attrs": {
+            "_FillValue": NaN,
             "accuracy": 0.001,
             "ancillary_variables": " ",
             "resolution": 1e-05,
@@ -209,6 +220,7 @@
     },
     "sci_water_temp": {
         "attrs": {
+            "_FillValue": NaN,
             "accuracy": 0.004,
             "ancillary_variables": " ",
             "instrument": "instrument_ctd",
@@ -228,6 +240,7 @@
     },
     "salinity": {
         "attrs": {
+            "_FillValue": NaN,
             "accuracy": " ",
             "ancillary_variables": " ",
             "instrument": "instrument_ctd",
@@ -247,6 +260,7 @@
     },
     "density": {
         "attrs": {
+            "_FillValue": NaN,
             "accuracy": " ",
             "ancillary_variables": " ",
             "instrument": "instrument_ctd",
