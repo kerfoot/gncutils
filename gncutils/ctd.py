@@ -74,7 +74,17 @@ def calculate_density(timestamps,
 
 
 def calculate_depth(pressure, latitude):
+    """Calculates depth from pressure (dbar) and latitude.  By default, gsw returns depths as negative.  This routine
+    returns the absolute values for positive depths.
 
-    return z_from_p(pressure, latitude)
+    Paramters:
+        pressure (decibars)
+        latitude (decimal degrees)
+
+    Returns:
+        depth (meters)
+    """
+
+    return abs(z_from_p(pressure, latitude))
 
 
