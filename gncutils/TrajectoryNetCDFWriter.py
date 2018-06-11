@@ -719,11 +719,11 @@ class TrajectoryNetCDFWriter(object):
             self._logger.debug("Datatype {:s} does not exist".format(var_name))
             return
 
-        try:
-            fill_value = NC_FILL_VALUES[datatype['type']]
-        except KeyError:
-            self._logger.warning('No _FillValue (type key) found for {:s}'.format(var_name))
-            return
+        # try:
+        #     fill_value = NC_FILL_VALUES[datatype['type']]
+        # except KeyError:
+        #     self._logger.warning('No _FillValue (type key) found for {:s}'.format(var_name))
+        #     return
 
         # # Replace nan with the datatype['type'] fill value
         # np.place(var_data, np.isnan(var_data), fill_value)
@@ -925,7 +925,9 @@ class TrajectoryNetCDFWriter(object):
             return
 
         self._attributes['deployment'] = deployment_configs
-        self._attributes['global'].update(global_atts)
+        self._attributes['global'] = global_atts
+        if 'global_attributes' in deployment_configs and deployment_configs['global_attributes']:
+            self._attributes['global'].update(deployment_configs['global_attributes'])
         self._attributes['instruments'] = instrument_configs
 
         return True
