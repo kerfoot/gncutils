@@ -296,7 +296,6 @@ class TrajectoryNetCDFWriter(object):
             self.set_scalar(container_variable)
             for k, v in sorted(self.nc_sensor_defs[container_variable]['attrs'].items()):
                 if k.lower() == '_fillvalue':
-                    self._logger.info('Skipping _FillValue')
                     continue
                 self._nc.variables[container_variable].setncattr(k, v)
 
@@ -605,7 +604,6 @@ class TrajectoryNetCDFWriter(object):
         for k, v in sorted(desc['attrs'].items()):
             # self._logger.info('Setting attribute {:s}:{:s}'.format(desc['nc_var_name'], k))
             if k.lower() == '_fillvalue':
-                self._logger.info('Skipping _FillValue')
                 continue
             datatype.setncattr(k, v)
 
