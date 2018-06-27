@@ -19,7 +19,7 @@ class ProfileNetCDFWriter(TrajectoryNetCDFWriter):
     # specific to writing profile NetCDFs, so we have to call
     # TrajectoryNetCDFWriter.__init__(self, ...)
     def __init__(self, config_path, nc_format='NETCDF4_CLASSIC', comp_level=1,
-                 clobber=False, profile_id=0, ctd_sensors=[], output_path=''):
+                 clobber=False, profile_id=0, ctd_sensors=[]):
 
         TrajectoryNetCDFWriter.__init__(self, config_path, nc_format=nc_format, comp_level=comp_level, clobber=clobber)
         self._profile_id = profile_id
@@ -40,8 +40,6 @@ class ProfileNetCDFWriter(TrajectoryNetCDFWriter):
         self._cdm_data_type = 'Profile'
 
         self._ctd_sensors = ctd_sensors
-
-        self._output_path = output_path or os.path.realpath(os.curdir)
 
     @property
     def profile_id(self):
@@ -114,11 +112,12 @@ class ProfileNetCDFWriter(TrajectoryNetCDFWriter):
         else:
             self._logger.warning('Cannot set profile_lat (missing {:s} variable)'.format(lat_var_name))
 
-    def write_ngdac_profiles(self, dba_files):
+    def write_ngdac_profiles(self, dba_files, output_path):
         """
         Loop through the input dba files and write to IOOS NGDAC-compliant Profile NetCDF files
 
         :param list dba_files - A list of strings containing paths to the input raw glider dba files
+        :param str output_path - Path to the output directory
         """
         # Make sure we have llat_* sensors defined in self.nc_sensor_defs
         ctd_valid = validate_sensors(self.nc_sensor_defs, self._ctd_sensors)
@@ -235,7 +234,7 @@ class ProfileNetCDFWriter(TrajectoryNetCDFWriter):
                 tmp_fid, tmp_nc = tempfile.mkstemp(dir=tmp_dir, suffix='.nc', prefix=os.path.basename(profile_filename))
                 os.close(tmp_fid)
 
-                out_nc_file = os.path.join(self._output_path, '{:s}.nc'.format(profile_filename))
+                out_nc_file = os.path.join(output_path, '{:s}.nc'.format(profile_filename))
                 if os.path.isfile(out_nc_file):
                     if self._clobber:
                         logging.info('Clobbering existing NetCDF: {:s}'.format(out_nc_file))

@@ -48,8 +48,8 @@ def main(args):
 
     # Create the Trajectory NetCDF writer
     ncw = ProfileNetCDFWriter(config_path, comp_level=comp_level, nc_format=nc_format, profile_id=start_profile_id,
-                              clobber=clobber, ctd_sensors=ctd_sensors, output_path=output_path)
-    ncw.write_ngdac_profiles(dba_files)
+                              clobber=clobber, ctd_sensors=ctd_sensors, )
+    ncw.write_ngdac_profiles(dba_files, output_path)
 
 
     return 0
