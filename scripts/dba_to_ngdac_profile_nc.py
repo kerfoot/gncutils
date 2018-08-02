@@ -4,7 +4,7 @@ import os
 import sys
 import logging
 import argparse
-from gncutils.ProfileNetCDFWriter import ProfileNetCDFWriter
+from gncutils.DbaProfileNetCDFWriter import DbaProfileNetCDFWriter
 from gncutils.constants import NETCDF_FORMATS, LLAT_SENSORS
 
 
@@ -47,8 +47,8 @@ def main(args):
         return 1
 
     # Create the Trajectory NetCDF writer
-    ncw = ProfileNetCDFWriter(config_path, comp_level=comp_level, nc_format=nc_format, profile_id=start_profile_id,
-                              clobber=clobber, ctd_sensors=ctd_sensors, )
+    ncw = DbaProfileNetCDFWriter(config_path, comp_level=comp_level, nc_format=nc_format, profile_id=start_profile_id,
+                                 clobber=clobber, ctd_sensors=ctd_sensors)
     ncw.write_ngdac_profiles(dba_files, output_path)
 
 
