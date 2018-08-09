@@ -5,9 +5,9 @@ from gncutils.TrajectoryNetCDFWriter import TrajectoryNetCDFWriter
 class ProfileNetCDFWriter(TrajectoryNetCDFWriter):
 
     # We want to inherit from TrajectoryNetCDFWriter but also add a few more properties,
-    # specific to writing profile NetCDFs, so we have to call 
+    # specific to writing profile NetCDFs, so we have to call
     # TrajectoryNetCDFWriter.__init__(self, ...)
-    def __init__(self, config_path, nc_format='NETCDF4_CLASSIC', comp_level=1, clobber=False, profile_id=1):
+    def __init__(self, config_path, nc_format='NETCDF4_CLASSIC', comp_level=1, clobber=False, profile_id=0):
 
         TrajectoryNetCDFWriter.__init__(self, config_path, nc_format=nc_format, comp_level=comp_level, clobber=clobber)
         self._profile_id = profile_id
@@ -97,6 +97,7 @@ class ProfileNetCDFWriter(TrajectoryNetCDFWriter):
             self.set_scalar('profile_lat', self._nc.variables[lat_var_name][:].mean())
         else:
             self._logger.warning('Cannot set profile_lat (missing {:s} variable)'.format(lat_var_name))
+
 
     def __repr__(self):
 
