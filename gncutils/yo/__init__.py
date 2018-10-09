@@ -3,6 +3,7 @@
 import numpy as np
 import logging
 import os
+from netCDF4 import Dataset
 from gncutils.yo.constants import TIME_DIM, DATA_DIM
 from gncutils import clean_dataset, boxcar_smooth_dataset
 from gncutils.yo.filters import default_profiles_filter
@@ -121,7 +122,7 @@ def find_yo_extrema(timestamps, depth, tsint=10):
     ))
 
     # Set negative depth values to NaN
-    est_data[est_data[:, DATA_DIM] <= 0] = float('nan')
+    est_data[np.any(est_data <= 0, axis=1), :] = float('nan')
 
     # Remove NaN rows
     est_data = clean_dataset(est_data)
@@ -214,3 +215,46 @@ def find_yo_extrema(timestamps, depth, tsint=10):
 
     # return profiled_dataset
     return profile_times
+
+
+def find_navoceano_yo_extrema(nc_file):
+
+    if not os.path.isfile(nc_file):
+        logger.error('Invalid NetCDF file specified: {:s}'.format(nc_file))
+        return
+
+    try:
+        nci = Dataset(nc_file, 'r')
+    except IOError as e:
+        logger.error('Error opening NetCDF file {:s}: {:}'.format(nc_file, e))
+        return
+
+    if 'prof_start_index' not in nci.variables:
+        logger.warning('Missing prof_start_index: {:s}'.format(nc_file))
+        return
+    if 'prof_end_index' not in nci.variables:
+        logger.warning('Missing prof_end_index: {:s}'.format(nc_file))
+        return
+    if 'time' not in nci.variables:
+        logger.warning('Missing time: {:s}'.format(nc_file))
+        return
+
+    # Grab the prof_start_index
+    start_p_inds = nci.variables['prof_start_index'][:]
+    # Grab the prof_end_index
+    end_p_inds = nci.variables['prof_end_index'][:]
+
+    # Create the profile index array
+    p_inds = np.column_stack((start_p_inds, end_p_inds))
+
+    # Grab time
+    time = nci.variables['time'][:].data
+
+    # Create Nx2 numpy array of profile start/stop times - kerfoot method
+    profile_times = np.full((p_inds.shape[0], 2), np.nan)
+    profile_ind = 0
+    # Find the corresponding timestamps for p_inds
+    for t0,t1 in p_inds:
+        profile_times[profile_ind,:] = [time[t0], time[t1]]
+        profile_ind += 1
+
