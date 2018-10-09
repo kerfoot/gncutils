@@ -1,3 +1,4 @@
+
 # Valid python netCDF4 NetCDF file types
 NETCDF_FORMATS = ['NETCDF3_CLASSIC',
                   'NETCDF4_CLASSIC',
@@ -49,3 +50,7 @@ LLAT_SENSORS = ['llat_time',
 
 NGDAC_VAR_NAMES = ['time', 'depth', 'pressure', 'temperature', 'conductivity', 'salinity', 'density', 'profile_time',
                    'profile_id', 'profile_lat', 'profile_lon', 'lat', 'lon']
+
+REQUIRED_SENSOR_DEFS_KEYS = ['nc_var_name', 'type', 'dimension', 'attrs']
+CF_VARIABLE_ATTRIBUTES = ['long_name', 'standard_name', 'units', 'comment']
+
