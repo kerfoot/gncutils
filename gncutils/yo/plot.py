@@ -13,6 +13,8 @@ _hours_format = mdates.DateFormatter('%H:%M')
 def plot_yo(yo, profile_times):
     """Plot the glider yo and the indexed profiles"""
 
+    yo = yo[~np.isnan(yo).any(axis=1)]
+
     ax = plt.gca()
 
     ax.xaxis.set_major_locator(_days_formatter)
@@ -24,9 +26,9 @@ def plot_yo(yo, profile_times):
     t = num2date(yo[:, 0], 'seconds since 1970-01-01 00:00:00Z')
     # yo[:,0] = num2date(yo[:,0], 'seconds since 1970-01-01 00:00:00Z')
     plt.plot(t, -yo[:,1], 'k.', axes=ax)
-    
+
     for p in profile_times:
-    
+
         # Create the profile by finding all timestamps in yo that are included in the
         # window p
         p_inds = np.where(np.logical_and(yo[:,0] >= p[0], yo[:,0] <= p[1]))
@@ -37,7 +39,7 @@ def plot_yo(yo, profile_times):
         # pro = pro[np.all(~np.isnan(pro),axis=1)]
 
         plt.plot(p_times, -p_data)
-        
+
     plt.show()
 
 
