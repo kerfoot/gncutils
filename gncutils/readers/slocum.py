@@ -8,17 +8,18 @@ import logging
 import numpy as np
 import datetime
 from copy import deepcopy
-from gsw import z_from_p
+from gsw import z_from_p as gsw_z_from_p
 from gncutils.gps import interpolate_gps, get_decimal_degrees
 from gncutils.constants import (
     SLOCUM_TIMESTAMP_SENSORS,
     SLOCUM_PRESSURE_SENSORS,
-    SLOCUM_DEPTH_SENSORS)
+    SLOCUM_DEPTH_SENSORS,
+    NC_FILL_VALUES)
 
 logger = logging.getLogger(os.path.basename(__name__))
 
 
-def create_llat_dba_reader(dba_file, timesensor=None, pressuresensor=None, depthsensor=None):
+def create_llat_dba_reader(dba_file, timesensor=None, pressuresensor=None, depthsensor=None, z_from_p=True):
     if not os.path.isfile(dba_file):
         logging.error('dba file does not exist: {:s}'.format(dba_file))
         return
@@ -36,9 +37,9 @@ def create_llat_dba_reader(dba_file, timesensor=None, pressuresensor=None, depth
     if not time_sensor:
         return
     # Select the pressure sensor
-    pressure_sensor = select_pressure_sensor(dba)
+    pressure_sensor = select_pressure_sensor(dba, pressuresensor=pressuresensor)
     # Select the depth sensor
-    depth_sensor = select_depth_sensor(dba)
+    depth_sensor = select_depth_sensor(dba, depthsensor=depthsensor)
     # We must have either a pressure_sensor or depth_sensor to continue
     if not pressure_sensor and not depth_sensor:
         logger.warning('No pressure sensor and no depth sensor found: {:s}'.format(dba_file))
@@ -79,15 +80,15 @@ def create_llat_dba_reader(dba_file, timesensor=None, pressuresensor=None, depth
                                                              lon_sensor['data'])
 
     # If no depth_sensor was selected, use llat_latitude, llat_longitude and llat_pressure to calculate
-    if not depth_sensor:
-        logger.info(
-            'Calculating depth from select pressure sensor: {:s}'.format(pressure_sensor['attrs']['source_sensor']))
+    if not depth_sensor or z_from_p:
+        logger.debug(
+            'Calculating depth from selected pressure sensor: {:s}'.format(pressure_sensor['attrs']['source_sensor']))
 
         depth_sensor = {'sensor_name': 'llat_depth',
                         'attrs': {}}
         depth_sensor['attrs']['source_sensor'] = 'llat_pressure,llat_latitude'
         depth_sensor['attrs']['comment'] = u'Calculated from llat_pressure and llat_latitude using gsw.z_from_p'
-        depth_sensor['data'] = -z_from_p(pressure_sensor['data'], lat_sensor['data'])
+        depth_sensor['data'] = -gsw_z_from_p(pressure_sensor['data'], lat_sensor['data'])
 
     # Append the llat variables
     dba['data'] = np.append(dba['data'], time_sensor['data'], axis=1)
@@ -326,6 +327,8 @@ def select_time_sensor(dba, timesensor=None):
 
 
 def select_pressure_sensor(dba, pressuresensor=None):
+    """Returns selected pressure sensor name and pressure array in decibars"""
+
     # List of available dba sensors
     dba_sensors = [s['sensor_name'] for s in dba['sensors']]
 
@@ -399,3 +402,4 @@ def select_depth_sensor(dba, depthsensor=None):
     depth_sensor['data'] = np.expand_dims(dba['data'][:, c], 1)
 
     return depth_sensor
+
