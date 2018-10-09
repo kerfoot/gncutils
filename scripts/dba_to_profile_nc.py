@@ -4,14 +4,8 @@ import os
 import sys
 import logging
 import argparse
-import tempfile
-import datetime
-import shutil
-from gncutils.ProfileNetCDFWriter import ProfileNetCDFWriter
-from gncutils.readers.dba import create_llat_dba_reader
-from gncutils.yo import build_yo, find_profiles
+from gncutils.netcdf.slocum.ProfileNetCDFWriter import ProfileNetCDFWriter as SlocumProfileNetCDFWriter
 from gncutils.constants import NETCDF_FORMATS
-import numpy as np
 
 
 def main(args):
@@ -30,6 +24,7 @@ def main(args):
     clobber = args.clobber
     comp_level = args.compression
     nc_format = args.nc_format
+    ngdac_extensions = args.ngdac
 
     if not os.path.isdir(config_path):
         logging.error('Invalid configuration directory: {:s}'.format(config_path))
@@ -48,149 +43,14 @@ def main(args):
         return 1
 
     # Create the Trajectory NetCDF writer
-    ncw = ProfileNetCDFWriter(config_path, comp_level=comp_level, nc_format=nc_format, profile_id=start_profile_id,
-                              clobber=clobber)
+    ncw = SlocumProfileNetCDFWriter(config_path, comp_level=comp_level, nc_format=nc_format,
+                                    profile_id=start_profile_id,
+                                    clobber=clobber)
     if args.debug:
         sys.stdout.write('{}\n'.format(ncw))
         return 0
 
-    # Create a temporary directory for creating/writing NetCDF prior to moving them to output_path
-    tmp_dir = tempfile.mkdtemp()
-    logging.debug('Temporary NetCDF directory: {:s}'.format(tmp_dir))
-
-    # Write one NetCDF file for each input file
-    output_nc_files = []
-    processed_dbas = []
-    for dba_file in dba_files:
-
-        if not os.path.isfile(dba_file):
-            logging.error('Invalid dba file specified: {:s}'.format(dba_file))
-            continue
-
-        logging.info('Processing dba file: {:s}'.format(dba_file))
-
-        # Parse the dba file
-        dba = create_llat_dba_reader(dba_file)
-        if dba is None or len(dba['data']) == 0:
-            logging.warning('Skipping empty dba file: {:s}'.format(dba_file))
-            continue
-
-        # Create the yo for profile indexing find the profile minima/maxima
-        yo = build_yo(dba)
-        if yo is None:
-            continue
-        try:
-            profile_times = find_profiles(yo)
-        except ValueError as e:
-            logging.error('{:s}: {:s}'.format(dba_file, e))
-            continue
-
-        logging.info('{:0.0f} profiles indexed'.format(len(profile_times)))
-        if len(profile_times) == 0:
-            continue
-
-        # All timestamps from stream
-        ts = yo[:, 0]
-
-        for profile_interval in profile_times:
-
-            # Profile start time
-            p0 = profile_interval[0]
-            # Profile end time
-            p1 = profile_interval[-1]
-            # Find all rows in ts that are between p0 & p1
-            p_inds = np.flatnonzero(np.logical_and(ts >= p0, ts <= p1))
-            # profile_stream = dba['data'][p_inds[0]:p_inds[-1]]
-
-            # Calculate and convert profile mean time to a datetime
-            mean_profile_epoch = np.nanmean(profile_interval)
-            if np.isnan(mean_profile_epoch):
-                logging.warning('Profile mean timestamp is Nan')
-                continue
-            # If no start profile id was specified on the command line, use the mean_profile_epoch as the profile_id
-            # since it will be unique to this profile and deployment
-            if args.start_profile_id < 1:
-                ncw.profile_id = int(mean_profile_epoch)
-            pro_mean_dt = datetime.datetime.utcfromtimestamp(mean_profile_epoch)
-
-            # Create the output NetCDF path
-            pro_mean_ts = pro_mean_dt.strftime('%Y%m%dT%H%M%SZ')
-            profile_filename = '{:s}-{:s}-{:s}-profile'.format(ncw.attributes['deployment']['glider'], pro_mean_ts,
-                                                       dba['file_metadata']['filename_extension'])
-            # Path to temporarily hold file while we create it
-            tmp_fid, tmp_nc = tempfile.mkstemp(dir=tmp_dir, suffix='.nc', prefix=os.path.basename(profile_filename))
-            os.close(tmp_fid)
-
-            out_nc_file = os.path.join(output_path, '{:s}.nc'.format(profile_filename))
-            if os.path.isfile(out_nc_file):
-                if args.clobber:
-                    logging.info('Clobbering existing NetCDF: {:s}'.format(out_nc_file))
-                else:
-                    logging.warning('Skipping existing NetCDF: {:s}'.format(out_nc_file))
-                    continue
-
-            # Initialize the temporary NetCDF file
-            try:
-                ncw.init_nc(tmp_nc)
-            except (OSError, IOError) as e:
-                logging.error('Error initializing {:s}: {}'.format(tmp_nc, e))
-                continue
-
-            try:
-                ncw.open_nc()
-                # Add command line call used to create the file
-                ncw.update_history('{:s} {:s}'.format(sys.argv[0], dba_file))
-            except (OSError, IOError) as e:
-                logging.error('Error opening {:s}: {}'.format(tmp_nc, e))
-                os.unlink(tmp_nc)
-                continue
-
-            # Create and set the trajectory
-            trajectory_string = '{:s}'.format(ncw.trajectory)
-            ncw.set_trajectory_id()
-            # Update the global title attribute with the name of the source dba file
-            ncw.set_title('{:s}-{:s} Vertical Profile'.format(ncw.deployment_configs['glider'],
-                                                              pro_mean_dt.strftime('%Y%m%d%H%M%SZ')))
-
-            # Create the source file scalar variable
-            ncw.set_source_file_var(dba['file_metadata']['filename_label'], dba['file_metadata'])
-
-            # Update the self.nc_sensors_defs with the dba sensor definitions
-            ncw.update_data_file_sensor_defs(dba['sensors'])
-
-            # Find and set container variables
-            ncw.set_container_variables()
-
-            # Create variables and add data
-            for v in list(range(len(dba['sensors']))):
-                var_name = dba['sensors'][v]['sensor_name']
-                var_data = dba['data'][p_inds, v]
-                logging.debug('Inserting {:s} data array'.format(var_name))
-
-                ncw.insert_var_data(var_name, var_data)
-
-            # Write scalar profile variable and permanently close the NetCDF file
-            nc_file = ncw.finish_nc()
-
-            if nc_file:
-                try:
-                    shutil.move(tmp_nc, out_nc_file)
-                    os.chmod(out_nc_file, 0o755)
-                except IOError as e:
-                    logging.error('Error moving temp NetCDF file {:s}: {:}'.format(tmp_nc, e))
-                    continue
-
-            output_nc_files.append(out_nc_file)
-
-        processed_dbas.append(dba_file)
-
-    # Delete the temporary directory once files have been moved
-    try:
-        logging.debug('Removing temporary directory: {:s}'.format(tmp_dir))
-        shutil.rmtree(tmp_dir)
-    except OSError as e:
-        logging.error(e)
-        return 1
+    output_nc_files = ncw.dbas_to_profile_nc(dba_files, output_path, ngdac_extensions=ngdac_extensions)
 
     # Print the list of files created
     for output_nc_file in output_nc_files:
@@ -211,8 +71,12 @@ if __name__ == '__main__':
                             help='Source ASCII dba files to process',
                             nargs='+')
 
+    arg_parser.add_argument('--ngdac',
+                            help='Name output files using IOOS NGDAC naming conventions. If specified, rt is appended to created NetCDF files for sbd/tbd pairs',
+                            action='store_true')
+
     arg_parser.add_argument('-p', '--start_profile_id',
-                            help='Integer specifying the beginning profile id. If not specified or <1 the mean profile unix timestamp is used',
+                            help='Integer specifying the beginning profile id. Default is mean profile unix timestamp',
                             type=int,
                             default=0)
 
