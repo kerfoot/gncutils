@@ -1,3 +1,4 @@
+from netCDF4 import default_fillvals as NC_FILL_VALUES
 
 # Valid python netCDF4 NetCDF file types
 NETCDF_FORMATS = ['NETCDF3_CLASSIC',
