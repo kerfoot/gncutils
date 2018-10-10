@@ -637,7 +637,7 @@ class BaseTrajectoryNetCDFWriter(object):
 
         sensor_def = self.check_datatype_exists(sensor)
         if not sensor_def:
-            self._logger.warning('Failed to create NetCDF scalar value: {:s}'.format(sensor))
+            self._logger.warning('No sensor definition found for NetCDF scalar: {:s}'.format(sensor))
             return
 
         # Store the value in the scalar if there is one
