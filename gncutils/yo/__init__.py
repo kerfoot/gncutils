@@ -114,6 +114,9 @@ def find_yo_extrema(timestamps, depth, tsint=10):
     Use filter_yo_extrema to remove invalid/incomplete profiles
     """
 
+    # Create Nx2 numpy array of profile start/stop times - kerfoot method
+    profile_times = np.empty((0, 2))
+
     # validate_glider_args(timestamps, depth)
 
     est_data = np.column_stack((
@@ -156,6 +159,8 @@ def find_yo_extrema(timestamps, depth, tsint=10):
 
     p_inds = np.empty((0, 2))
     inflections = np.where(np.diff(delta_depth) != 0)[0]
+    if not inflections.any():
+        return profile_times
 
     p_inds = np.append(p_inds, [[0, inflections[0]]], axis=0)
     for p in range(len(inflections) - 1):
@@ -173,7 +178,7 @@ def find_yo_extrema(timestamps, depth, tsint=10):
     # Replace DATA_DIM column with the original depths
     profiled_dataset[:, DATA_DIM] = depth
 
-    # Create Nx2 numpy array of profile start/stop times - kerfoot method
+    # # Create Nx2 numpy array of profile start/stop times - kerfoot method
     profile_times = np.full((p_inds.shape[0], 2), np.nan)
 
     # Start profile index
