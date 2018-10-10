@@ -30,7 +30,7 @@ class TrajectoryNetCDFWriter(BaseTrajectoryNetCDFWriter):
                 self._logger.error('Invalid dba file specified: {:s}'.format(dba_file))
                 continue
 
-            self._logger.info('Processing dba file: {:s}'.format(dba_file))
+            self._logger.debug('Reading dba file: {:s}'.format(dba_file))
 
             # Parse the dba file
             dba = create_llat_dba_reader(dba_file, z_from_p=z_from_p)
@@ -59,6 +59,8 @@ class TrajectoryNetCDFWriter(BaseTrajectoryNetCDFWriter):
                 else:
                     self._logger.debug('Skipping existing NetCDF: {:s}'.format(out_nc_file))
                     continue
+
+            self._logger.info('Processing dba file: {:s}'.format(dba_file))
 
             # Path to hold file while we create it
             tmp_fid, tmp_nc = tempfile.mkstemp(dir=tmp_dir, suffix='.nc', prefix=os.path.basename(__file__))
