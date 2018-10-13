@@ -53,6 +53,11 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
             if len(profile_times) == 0:
                 continue
 
+            # Clean up the dba:
+            # 1. Replace NaNs with fill values
+            # 2. Set llat_time 0 values to fill values
+            dba = self.clean_dba(dba)
+
             # All timestamps from stream
             ts = yo[:, 0]
 
@@ -135,11 +140,6 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
                 # Find and set container variables
                 self.set_container_variables()
 
-                # Clean up the dba:
-                # 1. Replace NaNs with fill values
-                # 2. Set llat_time 0 values to fill values
-                dba = self.clean_dba(dba)
-
                 # Create variables and add data
                 for v in list(range(len(dba['sensors']))):
                     var_name = dba['sensors'][v]['sensor_name']
@@ -194,12 +194,12 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
             # Default fill value for slocum gliders is nan.  Check the sensor def for 'attrs'['_FillValue'].  If it
             # doesn't exist, get the default fill value for this datatype replace all NaNs with this value and
             # update the sensor def
-            fill_value = None
-            if '_FillValue' in sensor_def['attrs']:
+            if '_FillValue' in sensor_def['attrs'] and sensor_def['attrs']['_FillValue'] is not None:
                 fill_value = sensor_def['attrs']['_FillValue']
-            elif 'missing_value' in sensor_def['attrs']:
+            elif 'missing_value' in sensor_def['attrs'] and sensor_def['attrs']['missing_value'] is not None:
                 fill_value = sensor_def['attrs']['missing_value']
-            if '_FillValue' not in sensor_def['attrs'] and 'missing_value' not in sensor_def['attrs']:
+            # if '_FillValue' not in sensor_def['attrs'] and 'missing_value' not in sensor_def['attrs']:
+            else:
                 try:
                     fill_value = NC_FILL_VALUES[sensor_def['type']]
                     sensor_def['attrs']['_FillValue'] = fill_value
