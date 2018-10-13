@@ -81,14 +81,17 @@ def create_llat_dba_reader(dba_file, timesensor=None, pressuresensor=None, depth
 
     # If no depth_sensor was selected, use llat_latitude, llat_longitude and llat_pressure to calculate
     if not depth_sensor or z_from_p:
-        logger.debug(
-            'Calculating depth from selected pressure sensor: {:s}'.format(pressure_sensor['attrs']['source_sensor']))
-
-        depth_sensor = {'sensor_name': 'llat_depth',
-                        'attrs': {}}
-        depth_sensor['attrs']['source_sensor'] = 'llat_pressure,llat_latitude'
-        depth_sensor['attrs']['comment'] = u'Calculated from llat_pressure and llat_latitude using gsw.z_from_p'
-        depth_sensor['data'] = -gsw_z_from_p(pressure_sensor['data'], lat_sensor['data'])
+        if pressure_sensor:
+	        logger.debug(
+	            'Calculating depth from selected pressure sensor: {:s}'.format(pressure_sensor['attrs']['source_sensor']))
+	
+	        depth_sensor = {'sensor_name': 'llat_depth',
+	                        'attrs': {}}
+	        depth_sensor['attrs']['source_sensor'] = 'llat_pressure,llat_latitude'
+	        depth_sensor['attrs']['comment'] = u'Calculated from llat_pressure and llat_latitude using gsw.z_from_p'
+	        depth_sensor['data'] = -gsw_z_from_p(pressure_sensor['data'], lat_sensor['data'])
+        else:
+            logging.warning('No pressure sensor found for calculating depth')
 
     # Append the llat variables
     dba['data'] = np.append(dba['data'], time_sensor['data'], axis=1)
