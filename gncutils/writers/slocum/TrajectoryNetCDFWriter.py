@@ -182,11 +182,12 @@ class TrajectoryNetCDFWriter(BaseTrajectoryNetCDFWriter):
             # doesn't exist, get the default fill value for this datatype replace all NaNs with this value and
             # update the sensor def
             fill_value = None
-            if '_FillValue' in sensor_def['attrs']:
+            if '_FillValue' in sensor_def['attrs'] and sensor_def['attrs']['_FillValue'] is not None:
                 fill_value = sensor_def['attrs']['_FillValue']
-            elif 'missing_value' in sensor_def['attrs']:
+            elif 'missing_value' in sensor_def['attrs'] and sensor_def['attrs']['missing_value'] is not None:
                 fill_value = sensor_def['attrs']['missing_value']
-            if '_FillValue' not in sensor_def['attrs'] and 'missing_value' not in sensor_def['attrs']:
+            # if '_FillValue' not in sensor_def['attrs'] and 'missing_value' not in sensor_def['attrs']:
+            else:
                 try:
                     fill_value = NC_FILL_VALUES[sensor_def['type']]
                     sensor_def['attrs']['_FillValue'] = fill_value
