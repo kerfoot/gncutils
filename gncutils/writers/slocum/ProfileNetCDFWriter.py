@@ -25,6 +25,7 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
         # Write one NetCDF file for each input file
         output_nc_files = []
         processed_dbas = []
+        non_clobbered_nc_files_count = 0
         for dba_file in dba_files:
 
             if not os.path.isfile(dba_file):
@@ -106,6 +107,7 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
                         self._logger.info('Clobbering existing NetCDF: {:s}'.format(out_nc_file))
                     else:
                         self._logger.debug('Skipping existing NetCDF: {:s}'.format(out_nc_file))
+                        non_clobbered_nc_files_count += 1
                         continue
 
                 # Initialize the temporary NetCDF file
@@ -163,6 +165,9 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
 
             processed_dbas.append(dba_file)
 
+        if not self.clobber:
+            self._logger.info('{:0.0f} NetCDFs not clobbered'.format(non_clobbered_nc_files_count))
+
         # Delete the temporary directory once files have been moved
         try:
             self._logger.debug('Removing temporary directory: {:s}'.format(tmp_dir))
@@ -170,6 +175,155 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
         except OSError as e:
             self._logger.error(e)
             return 1
+
+        return output_nc_files
+
+    def dba_obj_to_profile_nc(self, dba, output_path, tmp_dir=None, ngdac_extensions=False):
+
+        output_nc_files = []
+        non_clobbered_nc_files_count = 0
+
+        # Create the yo for profile indexing find the profile minima/maxima
+        yo = build_yo(dba)
+        if yo is None:
+            return output_nc_files
+        try:
+            profile_times = find_profiles(yo)
+        except ValueError as e:
+            self._logger.error('{:s}: {:s}'.format(dba, e))
+            return output_nc_files
+
+        self._logger.info('{:0.0f} profiles indexed'.format(len(profile_times)))
+        if len(profile_times) == 0:
+            return output_nc_files
+
+        if not tmp_dir:
+            self._logger.info('Creating temporary NetCDF location')
+            try:
+                tmp_dir = tempfile.mkdtemp()
+            except OSError as e:
+                self._logger.error('Error creating temporary NetCDF location: {:}'.format(e))
+                return output_nc_files
+
+        self._logger.debug('Temporary NetCDF directory: {:s}'.format(tmp_dir))
+        if not os.path.isdir(tmp_dir):
+            self._logger.warning('Temporary NetCDF directory does not exist: {:s}'.format(tmp_dir))
+            return output_nc_files
+
+        # Clean up the dba:
+        # 1. Replace NaNs with fill values
+        # 2. Set llat_time 0 values to fill values
+        dba = self.clean_dba(dba)
+
+        # All timestamps from stream
+        ts = yo[:, 0]
+
+        # Update the self.nc_sensors_defs with the dba sensor definitions
+        self.update_data_file_sensor_defs(dba['sensors'])
+
+        for profile_interval in profile_times:
+
+            # Profile start time
+            p0 = profile_interval[0]
+            # Profile end time
+            p1 = profile_interval[-1]
+            # Find all rows in ts that are between p0 & p1
+            p_inds = np.flatnonzero(np.logical_and(ts >= p0, ts <= p1))
+            # profile_stream = dba['data'][p_inds[0]:p_inds[-1]]
+
+            # Calculate and convert profile mean time to a datetime
+            mean_profile_epoch = np.nanmean(profile_interval)
+            if np.isnan(mean_profile_epoch):
+                self._logger.warning('Profile mean timestamp is Nan')
+                continue
+            # If no start profile id was specified on the command line, use the mean_profile_epoch as the profile_id
+            # since it will be unique to this profile and deployment
+            if self.profile_id < 1:
+                self.profile_id = int(mean_profile_epoch)
+            pro_mean_dt = datetime.datetime.utcfromtimestamp(mean_profile_epoch)
+
+            # Create the output NetCDF path
+            pro_mean_ts = pro_mean_dt.strftime('%Y%m%dT%H%M%SZ')
+            if ngdac_extensions:
+                telemetry = 'rt'
+                if dba['file_metadata']['filename_extension'] != 'sbd' and dba['file_metadata']['filename_extension']:
+                    telemetry = 'delayed'
+
+                profile_nc_file = '{:s}_{:s}_{:s}'.format(self.attributes['deployment']['glider'],
+                                                          pro_mean_ts,
+                                                          telemetry)
+            else:
+                profile_nc_file = '{:s}_{:s}_{:s}'.format(self.attributes['deployment']['glider'],
+                                                          pro_mean_ts,
+                                                          dba['file_metadata']['filename_extension'])
+            # Path to temporarily hold file while we create it
+            tmp_fid, tmp_nc = tempfile.mkstemp(dir=tmp_dir, suffix='.nc', prefix=os.path.basename(profile_nc_file))
+            os.close(tmp_fid)
+
+            out_nc_file = os.path.join(output_path, '{:s}.nc'.format(profile_nc_file))
+            if os.path.isfile(out_nc_file):
+                if self.clobber:
+                    self._logger.info('Clobbering existing NetCDF: {:s}'.format(out_nc_file))
+                else:
+                    self._logger.debug('Skipping existing NetCDF: {:s}'.format(out_nc_file))
+                    non_clobbered_nc_files_count += 1
+                    continue
+
+            # Initialize the temporary NetCDF file
+            try:
+                self.init_nc(tmp_nc)
+            except (OSError, IOError) as e:
+                self._logger.error('Error initializing {:s}: {}'.format(tmp_nc, e))
+                continue
+
+            try:
+                self.open_nc()
+                # Add command line call used to create the file
+                self.update_history('{:s} {:s}'.format(sys.argv[0], dba['file_metadata']['source_file']))
+            except (OSError, IOError) as e:
+                self._logger.error('Error opening {:s}: {}'.format(tmp_nc, e))
+                os.unlink(tmp_nc)
+                continue
+
+            # Create and set the trajectory
+            trajectory_string = '{:s}'.format(self.trajectory)
+            self.set_trajectory_id()
+            # Update the global title attribute with the name of the source dba file
+            self.set_title('{:s}-{:s} Vertical Profile'.format(self.deployment_configs['glider'],
+                                                               pro_mean_dt.strftime('%Y%m%d%H%M%SZ')))
+
+            # Create the source file scalar variable
+            self.set_source_file_var(dba['file_metadata']['filename_label'], dba['file_metadata'])
+
+            # # Update the self.nc_sensors_defs with the dba sensor definitions
+            # self.update_data_file_sensor_defs(dba['sensors'])
+
+            # Find and set container variables
+            self.set_container_variables()
+
+            # Create variables and add data
+            for v in list(range(len(dba['sensors']))):
+                var_name = dba['sensors'][v]['sensor_name']
+                var_data = dba['data'][p_inds, v]
+                self._logger.debug('Inserting {:s} data array'.format(var_name))
+
+                self.insert_var_data(var_name, var_data)
+
+            # Write scalar profile variable and permanently close the NetCDF file
+            nc_file = self.finish_nc()
+
+            if nc_file:
+                try:
+                    shutil.move(tmp_nc, out_nc_file)
+                    os.chmod(out_nc_file, 0o755)
+                except IOError as e:
+                    self._logger.error('Error moving temp NetCDF file {:s}: {:}'.format(tmp_nc, e))
+                    continue
+
+            output_nc_files.append(out_nc_file)
+
+        if not self.clobber:
+            self._logger.info('{:0.0f} NetCDFs not clobbered'.format(non_clobbered_nc_files_count))
 
         return output_nc_files
 
