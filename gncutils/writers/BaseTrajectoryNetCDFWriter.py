@@ -996,7 +996,7 @@ class BaseTrajectoryNetCDFWriter(object):
             self._nc_sensor_defs[sensor]['attrs'][k] = v
 
     def update_data_file_sensor_defs(self, sensor_defs, override=False):
-        """Update the NetCDF sensor defintions with any additional attributes
+        """Update the NetCDF sensor definitions with any additional attributes
         created from parsing the raw data file.  If override is set to True, existing attributes from
         self.nc_sensor_defs[sensor] are replaced with the corresponding attribute from the raw data file reader variable
         attributes.
