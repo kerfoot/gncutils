@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from gsw import SP_from_C, SA_from_SP, CT_from_t, rho, z_from_p
+from gsw.density import sound_speed
 
 
 def create_practical_salinity_sensor(reader):
@@ -34,9 +35,7 @@ def calculate_practical_salinity(conductivity, temperature, pressure):
     )
 
 
-def calculate_density(timestamps,
-                      temperature, pressure, salinity,
-                      latitude, longitude):
+def calculate_density(temperature, pressure, salinity, latitude, longitude):
     """Calculates density given glider practical salinity, pressure, latitude,
     and longitude using Gibbs gsw SA_from_SP and rho functions.
 
@@ -71,6 +70,39 @@ def calculate_density(timestamps,
     )
 
     return density
+
+
+def calculate_sound_speed(temperature, pressure, salinity, latitude, longitude):
+    """Calculates sound speed given glider practical in-situ temperature, pressure and salinity using Gibbs gsw
+    SA_from_SP and rho functions.
+
+    Parameters:
+        temperature (C), pressure (dbar), salinity (psu PSS-78), latitude, longitude
+
+    Returns:
+        sound speed (m s-1)
+    """
+
+    absolute_salinity = SA_from_SP(
+        salinity,
+        pressure,
+        longitude,
+        latitude
+    )
+
+    conservative_temperature = CT_from_t(
+        absolute_salinity,
+        temperature,
+        pressure
+    )
+
+    speed = sound_speed(
+        absolute_salinity,
+        conservative_temperature,
+        pressure
+    )
+
+    return speed
 
 
 def calculate_depth(pressure, latitude):
