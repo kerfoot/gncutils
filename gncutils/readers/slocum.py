@@ -14,7 +14,10 @@ from gncutils.constants import (
     SLOCUM_TIMESTAMP_SENSORS,
     SLOCUM_PRESSURE_SENSORS,
     SLOCUM_DEPTH_SENSORS,
-    NC_FILL_VALUES)
+    SCI_CTD_SENSORS,
+    M_CTD_SENSORS)
+from gncutils.ctd import calculate_practical_salinity, calculate_density, calculate_sound_speed
+from gsw import pt0_from_t
 
 logger = logging.getLogger(os.path.basename(__name__))
 
@@ -82,14 +85,15 @@ def create_llat_dba_reader(dba_file, timesensor=None, pressuresensor=None, depth
     # If no depth_sensor was selected, use llat_latitude, llat_longitude and llat_pressure to calculate
     if not depth_sensor or z_from_p:
         if pressure_sensor:
-	        logger.debug(
-	            'Calculating depth from selected pressure sensor: {:s}'.format(pressure_sensor['attrs']['source_sensor']))
-	
-	        depth_sensor = {'sensor_name': 'llat_depth',
-	                        'attrs': {}}
-	        depth_sensor['attrs']['source_sensor'] = 'llat_pressure,llat_latitude'
-	        depth_sensor['attrs']['comment'] = u'Calculated from llat_pressure and llat_latitude using gsw.z_from_p'
-	        depth_sensor['data'] = -gsw_z_from_p(pressure_sensor['data'], lat_sensor['data'])
+            logger.debug(
+                'Calculating depth from selected pressure sensor: {:s}'.format(
+                    pressure_sensor['attrs']['source_sensor']))
+
+            depth_sensor = {'sensor_name': 'llat_depth',
+                            'attrs': {}}
+            depth_sensor['attrs']['source_sensor'] = 'llat_pressure,llat_latitude'
+            depth_sensor['attrs']['comment'] = u'Calculated from llat_pressure and llat_latitude using gsw.z_from_p'
+            depth_sensor['data'] = -gsw_z_from_p(pressure_sensor['data'], lat_sensor['data'])
         else:
             logging.warning('No pressure sensor found for calculating depth')
 
@@ -242,10 +246,10 @@ def parse_dba_sensor_defs(dba_file):
         logging.warning('No sensor defintions parsed: {:s}'.format(dba_file))
         return
 
-    # return [{'sensor': sensors[i], 'units' : units[i], 'bytes' : int(datatype_bytes[i])} for i in range(len(sensors))]
-    return [{'sensor_name': sensors[i], 'attrs': {'units': units[i], 'bytes': int(datatype_bytes[i])}} for i in
+    return [{'sensor_name': sensors[i],
+             'attrs': {'units': units[i], 'bytes': int(datatype_bytes[i]), 'source_sensor': sensors[i],
+                       'long_name': sensors[i]}} for i in
             range(len(sensors))]
-    # return {sensors[i] : {'attrs' : {'units' : units[i], 'bytes' : datatype_bytes[i]}, 'column' : i} for i in range(len(sensors))}
 
 
 def load_dba_data(dba_file):
@@ -406,3 +410,75 @@ def select_depth_sensor(dba, depthsensor=None):
 
     return depth_sensor
 
+
+def derive_ctd_parameters(dba):
+
+    # Get the list of sensors parsed from the dba_file
+    dba_sensors = [s['sensor_name'] for s in dba['sensors']]
+
+    ctd_sensors = []
+    found_ctd_sensors = [s for s in SCI_CTD_SENSORS if s in dba_sensors]
+    if len(found_ctd_sensors) == len(SCI_CTD_SENSORS):
+        ctd_sensors = SCI_CTD_SENSORS
+    else:
+        found_ctd_sensors = [s for s in M_CTD_SENSORS if s in dba_sensors]
+        if len(found_ctd_sensors) == len(M_CTD_SENSORS):
+            ctd_sensors = M_CTD_SENSORS
+
+    if not ctd_sensors:
+        logging.warning('Required CTD sensors not found in {:s}'.format(dba['file_metadata']['source_file']))
+        return dba
+    else:
+        lati = dba_sensors.index(ctd_sensors[0])
+        loni = dba_sensors.index(ctd_sensors[1])
+        pi = dba_sensors.index(ctd_sensors[2])
+        ti = dba_sensors.index(ctd_sensors[3])
+        ci = dba_sensors.index(ctd_sensors[4])
+
+        lat = dba['data'][:, lati]
+        lon = dba['data'][:, loni]
+        p = dba['data'][:, pi]
+        t = dba['data'][:, ti]
+        c = dba['data'][:, ci]
+
+        # Calculate salinity
+        salt = calculate_practical_salinity(c, t, p)
+        # Calculate density
+        density = calculate_density(t, p, salt, lat, lon)
+        # Calculate potential temperature
+        p_temp = pt0_from_t(salt, t, p)
+
+        # Add parameters as long as they exist in ncw.nc_sensor_defs
+        # if 'salinity' in ncw.nc_sensor_defs:
+        sensor_def = {'sensor_name': 'salinity',
+                      'attrs': {'ancillary_variables': 'conductivity,temperature,presssure',
+                                'observation_type': 'calculated'}}
+        dba['data'] = np.append(dba['data'], np.expand_dims(salt, 1), axis=1)
+        dba['sensors'].append(sensor_def)
+
+        # if 'density' in ncw.nc_sensor_defs:
+        sensor_def = {'sensor_name': 'density',
+                      'attrs': {
+                          'ancillary_variables': 'conductivity,temperature,presssure,latitude,longitude',
+                          'observation_type': 'calculated'}}
+        dba['data'] = np.append(dba['data'], np.expand_dims(density, 1), axis=1)
+        dba['sensors'].append(sensor_def)
+
+        # if 'potential_temperature' in ncw.nc_sensor_defs:
+        sensor_def = {'sensor_name': 'potential_temperature',
+                      'attrs': {'ancillary_variables': 'salinity,temperature,presssure',
+                                'observation_type': 'calculated'}}
+        dba['data'] = np.append(dba['data'], np.expand_dims(p_temp, 1), axis=1)
+        dba['sensors'].append(sensor_def)
+
+        # if 'sound_speed' in ncw.nc_sensor_defs:
+            # Calculate sound speed
+        svel = calculate_sound_speed(t, p, salt, lat, lon)
+        sensor_def = {'sensor_name': 'sound_speed',
+                      'attrs': {
+                          'ancillary_variables': 'conductivity,temperature,presssure,latitude,longitude',
+                          'observation_type': 'calculated'}}
+        dba['data'] = np.append(dba['data'], np.expand_dims(svel, 1), axis=1)
+        dba['sensors'].append(sensor_def)
+
+    return dba

@@ -27,16 +27,6 @@ SLOCUM_PRESSURE_SENSORS = ['sci_water_pressure',
 # Slocum native depth sensors
 SLOCUM_DEPTH_SENSORS = ['m_depth']
 
-# Slocum delayed mode file types
-SLOCUM_DELAYED_MODE_EXTENSIONS = ['dbd',
-                                  'ebd']
-
-# Slocum realtime mode file types
-SLOCUM_REALTIME_MODE_EXTENSIONS = ['sbd',
-                                   'mbd',
-                                   'nbd',
-                                   'tbd']
-
 SLOCUM_TEMPERATURE_SENSORS = ['sci_water_temp',
                               'm_water_temp']
 
@@ -55,3 +45,14 @@ NGDAC_VAR_NAMES = ['time', 'depth', 'pressure', 'temperature', 'conductivity', '
 REQUIRED_SENSOR_DEFS_KEYS = ['nc_var_name', 'type', 'dimension', 'attrs']
 CF_VARIABLE_ATTRIBUTES = ['long_name', 'standard_name', 'units', 'comment']
 
+SCI_CTD_SENSORS = ['llat_latitude',
+                   'llat_longitude',
+                   'llat_pressure',
+                   'sci_water_temp',
+                   'sci_water_cond']
+
+M_CTD_SENSORS = ['llat_latitude',
+                 'llat_longitude',
+                 'llat_pressure',
+                 'm_water_temp',
+                 'm_water_cond']
