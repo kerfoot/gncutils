@@ -50,7 +50,9 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
                 self._logger.error('{:s}: {:s}'.format(dba_file, e))
                 continue
 
-            self._logger.info('{:0.0f} profiles indexed'.format(len(profile_times)))
+            self._logger.info(
+                '{:s} {:0.0f} profiles indexed'.format(os.path.basename(dba['file_metadata']['source_file']),
+                                                       len(profile_times)))
             if len(profile_times) == 0:
                 continue
 
@@ -193,7 +195,7 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
             self._logger.error('{:s}: {:s}'.format(dba, e))
             return output_nc_files
 
-        self._logger.info('{:0.0f} profiles indexed'.format(len(profile_times)))
+        self._logger.info('{:s} {:0.0f} profiles indexed'.format(os.path.basename(dba['file_metadata']['source_file']), len(profile_times)))
         if len(profile_times) == 0:
             return output_nc_files
 
