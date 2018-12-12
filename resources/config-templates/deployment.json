@@ -1,7 +1,7 @@
 {
     "glider": " ",
     "trajectory_datetime": " ",
-    "trajectory_name": "cp05moas-gl339-D00004",
+    "trajectory_name": " ",
     "global_attributes": {
         "wmo_id": " ",
         "deployment_number" : -1,
@@ -12,6 +12,9 @@
         "id": " ",
         "wmo_id": " ",
         "long_name": "Slocum G2 Glider GLIDER_NAME",
+        "os_version": " ",
+        "slocum_type": "G2",
+        "depth_rating": " ",
         "comment": " ",
         "instrument": " ",
         "type": "platform"
