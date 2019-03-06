@@ -12,7 +12,7 @@ from gncutils.constants import NC_FILL_VALUES
 
 class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
 
-    def __init__(self, config_path, nc_format='NETCDF4_CLASSIC', comp_level=1, clobber=False, profile_id=1):
+    def __init__(self, config_path, nc_format='NETCDF4_CLASSIC', comp_level=1, clobber=False, profile_id=-1):
         BaseProfileNetCDFWriter.__init__(self, config_path, nc_format=nc_format, comp_level=comp_level, clobber=clobber,
                                          profile_id=profile_id)
 
