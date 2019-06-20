@@ -1,19 +1,19 @@
 [
     {
-        "nc_var_name": " ",
+        "nc_var_name": "instrument_ctd",
         "type": "i4",
         "attrs": {
-            "serial_number": " ",
+            "serial_number": "0034",
             "make_model": "Sea-Bird GPCTD",
-            "comment": "Slocum Glider GLIDER-NAME",
-            "long_name": "Pumped Conductivity, Temperature, Depth (CTD) Sensor",
+            "comment": "Unpumped",
+            "long_name": "Conductivity, Temperature, Depth (CTD) Sensor",
             "calibration_date": " ",
             "user_calibrated": "",
             "factory_calibrated": " ",
             "calibration_report": "",
             "type": "instrument",
             "platform": "platform",
-            "deployment" : -1
+            "deployment" : "542"
         }
     }
 ]

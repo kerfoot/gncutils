@@ -4,16 +4,15 @@
     "trajectory_name": " ",
     "global_attributes": {
         "wmo_id": " ",
-        "deployment_number" : -1,
-        "ooi_platform_id" : " "
+        "deployment_name": " ",
+        "deployment_id" : "-1"
     },
     "platform": {
-        "type": "platform",
         "id": " ",
         "wmo_id": " ",
-        "long_name": "Slocum G2 Glider GLIDER_NAME",
+        "long_name": "Teledyne Webb Research Slocum G2 glider",
         "os_version": " ",
-        "slocum_type": "G2",
+        "glider_type": " ",
         "depth_rating": " ",
         "comment": " ",
         "instrument": " ",
