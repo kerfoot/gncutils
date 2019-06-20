@@ -1,0 +1,371 @@
+{
+    "data": [
+        []
+    ],
+    "file_metadata": {
+        "all_sensors": "0",
+        "dbd_label": "DBD_ASC(dinkum_binary_data_ascii)file",
+        "encoding_ver": "2",
+        "file_size_bytes": 4507845,
+        "filename": "ru29-2017-004-2-89-sf",
+        "filename_extension": "dbd",
+        "filename_label": "ru29-2017-004-2-89-dbd(02480089)",
+        "fileopen_time": "Sun_Jan_29_19:46:38_2017",
+        "mission_name": "1K_N.MI",
+        "num_ascii_tags": "14",
+        "num_label_lines": "3",
+        "num_segments": "1",
+        "segment_filename_0": "ru29-2017-004-2-89",
+        "sensors_per_cycle": "43",
+        "source_file": "/Users/kerfoot/dev/gncutils/tests/ru29-20161105T0131/data/in/ascii/dbd/ru29_2017_004_2_89_dbd.dat",
+        "the8x3_filename": "02480089"
+    },
+    "sensors": [
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "rad"
+            },
+            "sensor_name": "c_fin"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "rad"
+            },
+            "sensor_name": "c_heading"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "rad"
+            },
+            "sensor_name": "c_pitch"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "rad"
+            },
+            "sensor_name": "c_roll"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "units": "lat"
+            },
+            "sensor_name": "c_wpt_lat"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "units": "lon"
+            },
+            "sensor_name": "c_wpt_lon"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "m"
+            },
+            "sensor_name": "m_altitude"
+        },
+        {
+            "attrs": {
+                "bytes": 1,
+                "units": "bool"
+            },
+            "sensor_name": "m_appear_to_be_at_surface"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "amp-hrs"
+            },
+            "sensor_name": "m_coulomb_amphr"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "m"
+            },
+            "sensor_name": "m_depth"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "rad"
+            },
+            "sensor_name": "m_fin"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "m/s"
+            },
+            "sensor_name": "m_final_water_vx"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "m/s"
+            },
+            "sensor_name": "m_final_water_vy"
+        },
+        {
+            "attrs": {
+                "bytes": 1,
+                "units": "enum"
+            },
+            "sensor_name": "m_gps_full_status"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "units": "lat"
+            },
+            "sensor_name": "m_gps_lat"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "units": "lon"
+            },
+            "sensor_name": "m_gps_lon"
+        },
+        {
+            "attrs": {
+                "bytes": 1,
+                "units": "enum"
+            },
+            "sensor_name": "m_gps_status"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "rad"
+            },
+            "sensor_name": "m_heading"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "nodim"
+            },
+            "sensor_name": "m_iridium_call_num"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "nodim"
+            },
+            "sensor_name": "m_iridium_redials"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "nodim"
+            },
+            "sensor_name": "m_iridium_signal_strength"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "units": "lat"
+            },
+            "sensor_name": "m_lat"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "units": "lon"
+            },
+            "sensor_name": "m_lon"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "rad"
+            },
+            "sensor_name": "m_pitch"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "units": "timestamp"
+            },
+            "sensor_name": "m_present_time"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "bar"
+            },
+            "sensor_name": "m_pressure"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "rad"
+            },
+            "sensor_name": "m_roll"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "s"
+            },
+            "sensor_name": "m_science_clothesline_lag"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "inHg"
+            },
+            "sensor_name": "m_vacuum"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "m"
+            },
+            "sensor_name": "m_water_depth"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "m/s"
+            },
+            "sensor_name": "m_water_vx"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "m/s"
+            },
+            "sensor_name": "m_water_vy"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "units": "timestamp"
+            },
+            "sensor_name": "gld_dup_sci_ctd41cp_timestamp"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "units": "timestamp"
+            },
+            "sensor_name": "gld_dup_sci_m_present_time"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "S/m"
+            },
+            "sensor_name": "gld_dup_sci_water_cond"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "bar"
+            },
+            "sensor_name": "gld_dup_sci_water_pressure"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "degC"
+            },
+            "sensor_name": "gld_dup_sci_water_temp"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "nodim"
+            },
+            "sensor_name": "x_software_ver"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "units": "timestamp"
+            },
+            "sensor_name": "sci_ctd41cp_timestamp"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "units": "timestamp"
+            },
+            "sensor_name": "sci_m_present_time"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "s/m"
+            },
+            "sensor_name": "sci_water_cond"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "bar"
+            },
+            "sensor_name": "sci_water_pressure"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "units": "degc"
+            },
+            "sensor_name": "sci_water_temp"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "comment": "Alias for m_present_time",
+                "source_sensor": "m_present_time",
+                "units": "seconds since 1970-01-01 00:00:00Z"
+            },
+            "sensor_name": "llat_time"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "comment": "Alias for sci_water_pressure, multiplied by 10 to convert from bar to dbar",
+                "source_sensor": "sci_water_pressure",
+                "units": "dbar"
+            },
+            "sensor_name": "llat_pressure"
+        },
+        {
+            "attrs": {
+                "bytes": 4,
+                "comment": "Alias for m_depth",
+                "source_sensor": "m_depth",
+                "units": "m"
+            },
+            "sensor_name": "llat_depth"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "comment": "m_gps_lat converted to decimal degrees and interpolated",
+                "source_sensor": "m_gps_lat",
+                "units": "lat"
+            },
+            "sensor_name": "llat_latitude"
+        },
+        {
+            "attrs": {
+                "bytes": 8,
+                "comment": "m_gps_lon converted to decimal degrees and interpolated",
+                "source_sensor": "m_gps_lon",
+                "units": "lon"
+            },
+            "sensor_name": "llat_longitude"
+        }
+    ]
+}
