@@ -4,7 +4,12 @@ import os
 import sys
 import logging
 import argparse
-from gncutils.netcdf.slocum.ProfileNetCDFWriter import ProfileNetCDFWriter as SlocumProfileNetCDFWriter
+import numpy as np
+import tempfile
+import shutil
+from gncutils.writers.slocum.ProfileNetCDFWriter import ProfileNetCDFWriter as SlocumProfileNetCDFWriter
+from gncutils.readers.slocum import create_llat_dba_reader, derive_ctd_parameters
+from gncutils.yo import build_yo, find_profiles
 from gncutils.constants import NETCDF_FORMATS
 
 
@@ -46,11 +51,63 @@ def main(args):
     ncw = SlocumProfileNetCDFWriter(config_path, comp_level=comp_level, nc_format=nc_format,
                                     profile_id=start_profile_id,
                                     clobber=clobber)
-    if args.debug:
-        sys.stdout.write('{}\n'.format(ncw))
-        return 0
 
-    output_nc_files = ncw.dbas_to_profile_nc(dba_files, output_path, ngdac_extensions=ngdac_extensions)
+    if not args.clobber:
+        logging.info('Keeping existing NetCDF files')
+
+    output_nc_files = []
+    if not args.science:
+        logging.info('Writing unprocessed NetCDF files')
+        if args.debug:
+            sys.stdout.write('{}\n'.format(ncw))
+            return 0
+        output_nc_files = ncw.dbas_to_profile_nc(dba_files, output_path, ngdac_extensions=ngdac_extensions)
+    else:
+
+        logging.info('Writing science NetCDF files')
+        if args.debug:
+            sys.stdout.write('{}\n'.format(ncw))
+            return 0
+        # Create a temporary directory for creating/writing NetCDF prior to moving them to output_path
+        tmp_dir = tempfile.mkdtemp()
+        logging.debug('Temporary NetCDF directory: {:s}'.format(tmp_dir))
+
+        for dba_file in dba_files:
+            dba = create_llat_dba_reader(dba_file)
+            if dba is None:
+                continue
+
+            # Create the yo for profile indexing find the profile minima/maxima
+            yo = build_yo(dba)
+            if yo is None:
+                continue
+            try:
+                profile_times = find_profiles(yo)
+            except ValueError as e:
+                logging.error('{:s}: {:s}'.format(dba, e))
+                continue
+
+            # logging.info('{:0.0f} profiles indexed'.format(len(profile_times)))
+            if len(profile_times) == 0:
+                continue
+
+            # Derive and add CTD parameters to the dba object
+            dba = derive_ctd_parameters(dba)
+
+            # Update the sensor definitions with the calculated parameters
+            ncw.update_data_file_sensor_defs(dba['sensors'], override=False)
+
+            nc_files = ncw.dba_obj_to_profile_nc(dba, output_path, tmp_dir=tmp_dir, ngdac_extensions=ngdac_extensions)
+            if nc_files:
+                output_nc_files = output_nc_files + nc_files
+
+        logging.info('{:0.0f} NetCDF files written: {:s}'.format(len(output_nc_files), output_path))
+        # Remove tmp_dir
+        try:
+            logging.debug('Removing temporary directory: {:s}'.format(tmp_dir))
+            shutil.rmtree(tmp_dir)
+        except OSError as e:
+            logging.error(e)
 
     # Print the list of files created
     for output_nc_file in output_nc_files:
@@ -70,6 +127,10 @@ if __name__ == '__main__':
     arg_parser.add_argument('dba_files',
                             help='Source ASCII dba files to process',
                             nargs='+')
+
+    arg_parser.add_argument('-s', '--science',
+                            help='Calculate derived scientific parameters and add to NetCDF provided the sensor definitions exist',
+                            action='store_true')
 
     arg_parser.add_argument('--ngdac',
                             help='Name output files using IOOS NGDAC naming conventions. If specified, rt is appended to created NetCDF files for sbd/tbd pairs',
