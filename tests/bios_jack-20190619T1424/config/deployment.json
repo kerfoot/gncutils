@@ -1,0 +1,21 @@
+{
+    "glider": "bios_jack",
+    "trajectory_datetime": " ",
+    "trajectory_name": "bios_jack-20190619T1424",
+    "global_attributes": {
+        "wmo_id": "4801980",
+        "deployment_name": "bios_jack-20190619T1424",
+        "deployment_id" : "562"
+    },
+    "platform": {
+        "id": "bios_jack",
+        "wmo_id": "4801980",
+        "long_name": "Teledyne Webb Research Slocum G2 glider",
+        "os_version": "8.2",
+        "glider_type": " ",
+        "depth_rating": "1000m",
+        "comment": " ",
+        "instrument": "instrument_ctd,instrument_flbbslc,instrument_optode,instrument_microrider",
+        "type": "platform"
+    }
+}

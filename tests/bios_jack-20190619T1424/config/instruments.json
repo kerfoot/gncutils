@@ -1,0 +1,70 @@
+[
+    {
+        "nc_var_name": "instrument_ctd",
+        "type": "i4",
+        "attrs": {
+            "serial_number": "9415",
+            "make_model": "Sea-Bird GPCTD",
+            "comment": "Pumped",
+            "long_name": "Conductivity, Temperature, Depth (CTD) Sensor",
+            "calibration_date": "2017-08-13",
+            "user_calibrated": "",
+            "factory_calibrated": "2017-08-13",
+            "calibration_report": "",
+            "type": "instrument",
+            "platform": "platform",
+            "deployment" : "458"
+        }
+    },
+    {
+        "nc_var_name": "instrument_optode",
+        "type": "i4",
+        "attrs": {
+            "serial_number": "565",
+            "make_model": "Aanderaa Oxygen Optode 4831",
+            "comment": " ",
+            "long_name": "Aanderaa Oxygen Sensor",
+            "calibration_date": "2018-06-22",
+            "user_calibrated": "",
+            "factory_calibrated": "2018-06-22",
+            "calibration_report": "",
+            "type": "instrument",
+            "platform": "platform",
+            "deployment" : "458"
+        }
+    },
+    {
+        "nc_var_name": "instrument_microrider",
+        "type": "i4",
+        "attrs": {
+            "serial_number": "708",
+            "make_model": "Rockland Scientific Microrider Turbulence Sensor",
+            "comment": " ",
+            "long_name": "Microrider Sensor",
+            "calibration_date": "2019-06-12",
+            "user_calibrated": "",
+            "factory_calibrated": "2019-06-12",
+            "calibration_report": "",
+            "type": "instrument",
+            "platform": "platform",
+            "deployment" : "458"
+        }
+    },
+    {
+        "nc_var_name": "instrument_flbbslc",
+        "type": "i4",
+        "attrs": {
+            "serial_number": "4783",
+            "make_model": "Sea-Bird FLBBSLC",
+            "comment": "Chlorophyll a and Backscatter at 700nm ",
+            "long_name": "Sea-Bird Chlorophyll a and Backscatter Meter",
+            "calibration_date": "2017-08-13",
+            "user_calibrated": "",
+            "factory_calibrated": "2017-08-13",
+            "calibration_report": "",
+            "type": "instrument",
+            "platform": "platform",
+            "deployment" : "458"
+        }
+    }
+]
