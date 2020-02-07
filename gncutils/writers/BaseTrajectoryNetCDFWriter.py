@@ -878,7 +878,7 @@ class BaseTrajectoryNetCDFWriter(object):
         if not dim:
             self._logger.warning('Skipping dimensionless variable: {:}'.format(var_name))
             return
-        
+
         # Add the variable data
         try:
             self._nc.variables[datatype['nc_var_name']][:] = var_data
