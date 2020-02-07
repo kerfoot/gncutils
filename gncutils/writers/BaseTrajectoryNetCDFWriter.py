@@ -874,6 +874,11 @@ class BaseTrajectoryNetCDFWriter(object):
             self._logger.debug('NetCDF variable {:s} not created'.format(var_name))
             return
 
+        dim = datatype.get('dimension', None)
+        if not dim:
+            self._logger.warning('Skipping dimensionless variable: {:}'.format(var_name))
+            return
+        
         # Add the variable data
         try:
             self._nc.variables[datatype['nc_var_name']][:] = var_data
