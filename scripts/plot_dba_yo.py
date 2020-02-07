@@ -4,7 +4,7 @@ import logging
 import os
 import argparse
 import sys
-from gncutils.readers.dba import create_llat_dba_reader
+from gncutils.readers.slocum import create_llat_dba_reader
 from gncutils.yo import slice_sensor_data, find_yo_extrema
 from gncutils.yo.plot import plot_yo
 from gncutils.yo.filters import default_profiles_filter
