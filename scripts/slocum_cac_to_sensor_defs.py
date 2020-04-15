@@ -89,7 +89,7 @@ def main(args):
                     'sensor': sensor_name,
                     'units': units,
                     'long_name': sensor_name,
-                    'comment': 'Slocum glider native sensor name',
+                    'comment': 'Native glider sensor name',
                     'processing_level': 0
                 },
                 'dimension': dimension,
