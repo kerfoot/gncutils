@@ -51,6 +51,12 @@ SCI_CTD_SENSORS = ['llat_latitude',
                    'sci_water_temp',
                    'sci_water_cond']
 
+ALT_CTD_SENSORS = ['llat_latitude',
+                   'llat_longitude',
+                   'sci_water_pressure2',
+                   'sci_water_temp2',
+                   'sci_water_cond2']
+
 M_CTD_SENSORS = ['llat_latitude',
                  'llat_longitude',
                  'llat_pressure',

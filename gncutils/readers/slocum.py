@@ -15,7 +15,8 @@ from gncutils.constants import (
     SLOCUM_PRESSURE_SENSORS,
     SLOCUM_DEPTH_SENSORS,
     SCI_CTD_SENSORS,
-    M_CTD_SENSORS)
+    M_CTD_SENSORS,
+    ALT_CTD_SENSORS)
 from gncutils.ctd import calculate_practical_salinity, calculate_density, calculate_sound_speed
 from gsw import pt0_from_t
 
@@ -466,7 +467,7 @@ def derive_ctd_parameters(dba):
 
         # if 'potential_temperature' in ncw.nc_sensor_defs:
         sensor_def = {'sensor_name': 'potential_temperature',
-                      'attrs': {'ancillary_variables': 'salinity,temperature,presssure',
+                      'attrs': {'ancillary_variables': 'salinity,temperature,pressure',
                                 'observation_type': 'calculated'}}
         dba['data'] = np.append(dba['data'], np.expand_dims(p_temp, 1), axis=1)
         dba['sensors'].append(sensor_def)
@@ -480,5 +481,68 @@ def derive_ctd_parameters(dba):
                           'observation_type': 'calculated'}}
         dba['data'] = np.append(dba['data'], np.expand_dims(svel, 1), axis=1)
         dba['sensors'].append(sensor_def)
+
+        # sci_water_*2 sensors for another CTD calculation
+        ctd_sensors = []
+        found_ctd_sensors = [s for s in ALT_CTD_SENSORS if s in dba_sensors]
+        if len(found_ctd_sensors) == len(ALT_CTD_SENSORS):
+            ctd_sensors = ALT_CTD_SENSORS
+
+        if not ctd_sensors:
+            logging.warning('Required alternate CTD sensors not found in {:s}'.format(dba['file_metadata']['source_file']))
+            return dba
+        else:
+            lati = dba_sensors.index(ctd_sensors[0])
+            loni = dba_sensors.index(ctd_sensors[1])
+            pi = dba_sensors.index(ctd_sensors[2])
+            ti = dba_sensors.index(ctd_sensors[3])
+            ci = dba_sensors.index(ctd_sensors[4])
+
+            lat = dba['data'][:, lati]
+            lon = dba['data'][:, loni]
+            # convert pressure from bar to db
+            p = dba['data'][:, pi] * 10
+            t = dba['data'][:, ti]
+            c = dba['data'][:, ci]
+
+            # Calculate salinity
+            salt = calculate_practical_salinity(c, t, p)
+            # Calculate density
+            density = calculate_density(t, p, salt, lat, lon)
+            # Calculate potential temperature
+            p_temp = pt0_from_t(salt, t, p)
+
+            # Add parameters as long as they exist in ncw.nc_sensor_defs
+            # if 'salinity' in ncw.nc_sensor_defs:
+            sensor_def = {'sensor_name': 'salinity2',
+                          'attrs': {'ancillary_variables': 'conductivity,temperature,presssure',
+                                    'observation_type': 'calculated'}}
+            dba['data'] = np.append(dba['data'], np.expand_dims(salt, 1), axis=1)
+            dba['sensors'].append(sensor_def)
+
+            # if 'density' in ncw.nc_sensor_defs:
+            sensor_def = {'sensor_name': 'density2',
+                          'attrs': {
+                              'ancillary_variables': 'conductivity,temperature,presssure,latitude,longitude',
+                              'observation_type': 'calculated'}}
+            dba['data'] = np.append(dba['data'], np.expand_dims(density, 1), axis=1)
+            dba['sensors'].append(sensor_def)
+
+            # if 'potential_temperature' in ncw.nc_sensor_defs:
+            sensor_def = {'sensor_name': 'potential_temperature2',
+                          'attrs': {'ancillary_variables': 'salinity,temperature,pressure',
+                                    'observation_type': 'calculated'}}
+            dba['data'] = np.append(dba['data'], np.expand_dims(p_temp, 1), axis=1)
+            dba['sensors'].append(sensor_def)
+
+            # if 'sound_speed' in ncw.nc_sensor_defs:
+            # Calculate sound speed
+            svel = calculate_sound_speed(t, p, salt, lat, lon)
+            sensor_def = {'sensor_name': 'sound_speed2',
+                          'attrs': {
+                              'ancillary_variables': 'conductivity,temperature,presssure,latitude,longitude',
+                              'observation_type': 'calculated'}}
+            dba['data'] = np.append(dba['data'], np.expand_dims(svel, 1), axis=1)
+            dba['sensors'].append(sensor_def)
 
     return dba
