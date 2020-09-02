@@ -1,62 +1,73 @@
 name: gncutils
 channels:
-- conda-forge
-- defaults
+  - conda-forge
+  - defaults
 dependencies:
-- asn1crypto
-- cffi
-- cryptography
-- curl
-- geos
-- gsw
-- hdf4
-- hdf5
-- idna
-- jpeg
-- krb5
-- libffi
-- libgfortran
-- libnetcdf
-- libssh2
-- netcdf4
-- openblas
-- paramiko
-- pyasn1
-- pycparser
-- pynacl
-- pysftp
-- python-dateutil
-- six
-- bcrypt
-- blas
-- certifi
-- cycler
-- freetype
-- icu
-- libiconv
-- libpng
-- libxml2
-- libxslt
-- lxml
-- matplotlib
-- mkl
-- numpy
-- openssl
-- pip
-- pyparsing
-- pyqt
-- python=3.5.4
-- pytz
-- qt
-- readline
-- scipy
-- setuptools
-- shapely
-- sip
-- sqlite
-- tk
-- wheel
-- xz
-- zlib
+  - asn1crypto=0.24.0
+  - bcrypt=3.1.4
+  - blas=1.0
+  - bzip2=1.0.8
+  - ca-certificates=2020.1.1
+  - certifi=2018.8.24
+  - cffi=1.11.5
+  - cftime=1.0.0b1
+  - cryptography=2.3.1
+  - cryptography-vectors=2.3.1
+  - curl=7.64.0
+  - cycler=0.10.0
+  - freetype=2.6.3
+  - geos=3.8.1
+  - gsw=3.2.1
+  - hdf4=4.2.13
+  - hdf5=1.10.3
+  - icu=58.2
+  - idna=2.9
+  - intel-openmp=2019.4
+  - jpeg=9c
+  - krb5=1.16.3
+  - libcurl=7.64.0
+  - libcxx=9.0.1
+  - libedit=3.1.20181209
+  - libffi=3.2.1
+  - libgfortran=3.0.1
+  - libiconv=1.15
+  - libnetcdf=4.6.1
+  - libpng=1.6.37
+  - libssh2=1.8.0
+  - libxml2=2.9.9
+  - libxslt=1.1.32
+  - lxml=4.2.5
+  - matplotlib=1.5.3
+  - mkl=2018.0.3
+  - ncurses=6.1
+  - netcdf4=1.4.1
+  - numpy=1.11.3
+  - openblas=0.2.20
+  - openssl=1.0.2u
+  - paramiko=2.4.1
+  - pip=20.0.2
+  - pyasn1=0.4.8
+  - pycparser=2.20
+  - pynacl=1.1.2
+  - pyparsing=2.4.6
+  - pyqt=5.6.0
+  - pysftp=0.2.9
+  - python=3.5.4
+  - python-dateutil=2.8.1
+  - pytz=2019.3
+  - pyyaml=3.13
+  - qt=5.6.2
+  - readline=7.0
+  - scipy=1.1.0
+  - setuptools=40.4.3
+  - shapely=1.5.16
+  - sip=4.18.1
+  - six=1.14.0
+  - sqlite=3.28.0
+  - tk=8.6.10
+  - wheel=0.34.2
+  - xz=5.2.4
+  - yaml=0.1.7
+  - zlib=1.2.11
 prefix: /Users/kerfoot/miniconda3/envs/gncutils
 
