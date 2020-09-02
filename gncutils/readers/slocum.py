@@ -489,7 +489,7 @@ def derive_ctd_parameters(dba):
             ctd_sensors = ALT_CTD_SENSORS
 
         if not ctd_sensors:
-            logging.warning('Required alternate CTD sensors not found in {:s}'.format(dba['file_metadata']['source_file']))
+            logging.warning('Alternate CTD sensors not found in {:s}'.format(dba['file_metadata']['source_file']))
             return dba
         else:
             lati = dba_sensors.index(ctd_sensors[0])
