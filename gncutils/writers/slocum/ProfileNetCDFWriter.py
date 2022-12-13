@@ -180,7 +180,7 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
 
         return output_nc_files
 
-    def dba_obj_to_profile_nc(self, dba, output_path, tmp_dir=None, ngdac_extensions=False):
+    def dba_obj_to_profile_nc(self, dba, output_path, tmp_dir=None, ngdac_extensions=False, bad_ext='bad'):
 
         output_nc_files = []
         non_clobbered_nc_files_count = 0
@@ -240,8 +240,13 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
                 continue
             # If no start profile id was specified on the command line, use the mean_profile_epoch as the profile_id
             # since it will be unique to this profile and deployment
-            if self.profile_id < 1:
-                self.profile_id = int(mean_profile_epoch)
+# 2021-08-30: kerfoot@marine - set profile_id to mean profile timestamp epoch            
+#            if self.profile_id < 1:
+#                self.profile_id = int(mean_profile_epoch)
+#            self._logger.info('Current self.profile_id = {:}'.format(self.profile_id))
+            self.profile_id = int(mean_profile_epoch)
+#            self._logger.info('New self.profile_id = {:}'.format(self.profile_id))
+
             pro_mean_dt = datetime.datetime.utcfromtimestamp(mean_profile_epoch)
 
             # Create the output NetCDF path
@@ -263,6 +268,13 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
             os.close(tmp_fid)
 
             out_nc_file = os.path.join(output_path, '{:s}.nc'.format(profile_nc_file))
+            if bad_ext:
+                bad_out_nc_file = '{:}.{:}'.format(out_nc_file, bad_ext)
+                if os.path.isfile(bad_out_nc_file):
+                    self._logger.warning('Bad file present: {:}'.format(bad_out_nc_file))
+                    self._logger.warning('Skipping NetCDF creation: {:}'.format(out_nc_file))
+                    continue
+
             if os.path.isfile(out_nc_file):
                 if self.clobber:
                     self._logger.info('Clobbering existing NetCDF: {:s}'.format(out_nc_file))
