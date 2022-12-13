@@ -622,7 +622,7 @@ class BaseTrajectoryNetCDFWriter(object):
 
         self._nc.setncattr('geospatial_vertical_min', min_depth)
         self._nc.setncattr('geospatial_vertical_max', max_depth)
-        self._nc.setncattr('geospatial_verical_resolution', depth_resolution)
+        self._nc.setncattr('geospatial_vertical_resolution', depth_resolution)
 
     def set_scalar(self, sensor, value=None):
         """Create the NetCDF scalar variable specified in self._nc_sensor_defs[sensor]
