@@ -116,6 +116,16 @@ def create_llat_dba_reader(dba_file, timesensor=None, pressuresensor=None, depth
     del (lon_sensor['data'])
     dba['sensors'].append(lon_sensor)
 
+    # Remove timestamps = 0 for time_llat
+    sensors = [s['sensor_name'] for s in dba['sensors']]
+    data = dba['data']
+    if 'llat_time' in sensors:
+        i = sensors.index('llat_time')
+        good_rows = data[:, i] > 1
+        if data.shape[0] != good_rows.sum():
+            logging.warning('Removing {:} bad timestamps'.format(data.shape[0] - good_rows.sum()))
+            dba['data'] = data[good_rows, :]
+
     return dba
 
 
