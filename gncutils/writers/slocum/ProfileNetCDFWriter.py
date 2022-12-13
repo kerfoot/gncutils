@@ -93,12 +93,12 @@ class ProfileNetCDFWriter(BaseProfileNetCDFWriter):
                         telemetry = 'delayed'
 
                     profile_nc_file = '{:s}_{:s}_{:s}'.format(self.attributes['deployment']['glider'],
-                                                               pro_mean_ts,
-                                                               telemetry)
+                                                              pro_mean_ts,
+                                                              telemetry)
                 else:
                     profile_nc_file = '{:s}_{:s}_{:s}'.format(self.attributes['deployment']['glider'],
-                                                               pro_mean_ts,
-                                                               dba['file_metadata']['filename_extension'])
+                                                              pro_mean_ts,
+                                                              dba['file_metadata']['filename_extension'])
                 # Path to temporarily hold file while we create it
                 tmp_fid, tmp_nc = tempfile.mkstemp(dir=tmp_dir, suffix='.nc', prefix=os.path.basename(profile_nc_file))
                 os.close(tmp_fid)
