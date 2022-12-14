@@ -4,7 +4,6 @@ import os
 import sys
 import logging
 import argparse
-import numpy as np
 import tempfile
 import shutil
 from gncutils.writers.slocum.ProfileNetCDFWriter import ProfileNetCDFWriter as SlocumProfileNetCDFWriter
@@ -30,6 +29,10 @@ def main(args):
     comp_level = args.compression
     nc_format = args.nc_format
     ngdac_extensions = args.ngdac
+    debug = args.debug
+
+    if debug:
+        logging.info('Debug mode: No files will be processed')
 
     if not os.path.isdir(config_path):
         logging.error('Invalid configuration directory: {:s}'.format(config_path))
@@ -58,14 +61,14 @@ def main(args):
     output_nc_files = []
     if not args.science:
         logging.info('Writing unprocessed NetCDF files')
-        if args.debug:
+        if debug:
             sys.stdout.write('{}\n'.format(ncw))
             return 0
         output_nc_files = ncw.dbas_to_profile_nc(dba_files, output_path, ngdac_extensions=ngdac_extensions)
     else:
 
         logging.info('Writing science NetCDF files')
-        if args.debug:
+        if debug:
             sys.stdout.write('{}\n'.format(ncw))
             return 0
         # Create a temporary directory for creating/writing NetCDF prior to moving them to output_path
@@ -73,6 +76,9 @@ def main(args):
         logging.debug('Temporary NetCDF directory: {:s}'.format(tmp_dir))
 
         for dba_file in dba_files:
+
+            logging.info('Processing dba: {:}'.format(dba_file))
+
             dba = create_llat_dba_reader(dba_file)
             if dba is None:
                 continue
@@ -129,11 +135,13 @@ if __name__ == '__main__':
                             nargs='+')
 
     arg_parser.add_argument('-s', '--science',
-                            help='Calculate derived scientific parameters and add to NetCDF provided the sensor definitions exist',
+                            help='Calculate derived scientific parameters and add to NetCDF provided the sensor '
+                                 'definitions exist',
                             action='store_true')
 
     arg_parser.add_argument('--ngdac',
-                            help='Name output files using IOOS NGDAC naming conventions. If specified, rt is appended to created NetCDF files for sbd/tbd pairs',
+                            help='Name output files using IOOS NGDAC naming conventions. If specified, rt is appended '
+                                 'to created NetCDF files for sbd/tbd pairs',
                             action='store_true')
 
     arg_parser.add_argument('-p', '--start_profile_id',
