@@ -123,7 +123,12 @@ def create_llat_dba_reader(dba_file, timesensor=None, pressuresensor=None, depth
         i = sensors.index('llat_time')
         good_rows = data[:, i] > 1
         if data.shape[0] != good_rows.sum():
-            logging.warning('Removing {:} bad timestamps'.format(data.shape[0] - good_rows.sum()))
+            logging.warning('Removing {:} bad early timestamps'.format(data.shape[0] - good_rows.sum()))
+            dba['data'] = data[good_rows, :]
+
+        good_rows = data[:, i] <= datetime.datetime.utcnow().timestamp()
+        if data.shape[0] != good_rows.sum():
+            logging.warning('Removing {:} bad late timestamps'.format(data.shape[0] - good_rows.sum()))
             dba['data'] = data[good_rows, :]
 
     return dba
