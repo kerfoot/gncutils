@@ -21,7 +21,6 @@ def main(args):
     status = 0
 
     cac_files = args.cac_files
-    dimension = args.dimension
     clobber = args.clobber
 
     defined_sensors = []
@@ -89,10 +88,9 @@ def main(args):
                     'sensor': sensor_name,
                     'units': units,
                     'long_name': sensor_name,
-                    'comment': 'Native glider sensor name',
-                    'processing_level': 0
+                    'comment': 'Native glider sensor name'
                 },
-                'dimension': dimension,
+                'dimension': 'time',
                 'nc_var_name': sensor_name,
                 'type': dtype}
             }
@@ -123,13 +121,8 @@ if __name__ == '__main__':
                             help='Location to write individual sensor definition json files',
                             default=os.path.realpath(os.curdir))
 
-    arg_parser.add_argument('-d', '--dimension',
-                            help='Dimension name',
-                            choices=['time', 'obs'],
-                            default='time')
-
     arg_parser.add_argument('-c', '--clobber',
-                            help='Clobber existing sensor defintions',
+                            help='Clobber existing sensor definitions',
                             action='store_true')
 
     arg_parser.add_argument('-j', '--json',
