@@ -373,6 +373,7 @@ def select_pressure_sensor(dba, pressuresensor=None):
     else:
         for p in SLOCUM_PRESSURE_SENSORS:
             if p in dba_sensors:
+                logging.info('Selected pressure sensor: {:}'.format(p))
                 c = dba_sensors.index(p)
                 pressure_sensor = deepcopy(dba['sensors'][c])
                 pressure_sensor['sensor_name'] = 'llat_pressure'
