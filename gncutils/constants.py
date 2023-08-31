@@ -1,4 +1,10 @@
 from netCDF4 import default_fillvals as NC_FILL_VALUES
+import datetime
+import pytz
+
+# The minimum timestamp allowed to be considered a valid measurement. Used in
+# gncutils.readers.slocum.create_llat_dba_reader to eliminate bad timestamps
+MIN_TIMESTAMP_ALLOWED = datetime.datetime(2000,1,1,0,0,0).replace(tzinfo=pytz.UTC).timestamp()
 
 # Valid python netCDF4 NetCDF file types
 NETCDF_FORMATS = ['NETCDF3_CLASSIC',
