@@ -11,6 +11,7 @@ from copy import deepcopy
 from gsw import z_from_p as gsw_z_from_p
 from gncutils.gps import interpolate_gps, get_decimal_degrees
 from gncutils.constants import (
+    MIN_TIMESTAMP_ALLOWED,
     SLOCUM_TIMESTAMP_SENSORS,
     SLOCUM_PRESSURE_SENSORS,
     SLOCUM_DEPTH_SENSORS,
@@ -86,13 +87,13 @@ def create_llat_dba_reader(dba_file, timesensor=None, pressuresensor=None, depth
     # If no depth_sensor was selected, use llat_latitude, llat_longitude and llat_pressure to calculate
     if not depth_sensor or z_from_p:
         if pressure_sensor:
-            logger.debug(
+            logger.info(
                 'Calculating depth from selected pressure sensor: {:s}'.format(
                     pressure_sensor['attrs']['source_sensor']))
 
             depth_sensor = {'sensor_name': 'llat_depth',
                             'attrs': {}}
-            depth_sensor['attrs']['source_sensor'] = 'llat_pressure,llat_latitude'
+#            depth_sensor['attrs']['ancillary_variables'] = 'llat_pressure,llat_latitude'
             depth_sensor['attrs']['comment'] = u'Calculated from llat_pressure and llat_latitude using gsw.z_from_p'
             depth_sensor['data'] = -gsw_z_from_p(pressure_sensor['data'], lat_sensor['data'])
         else:
@@ -121,14 +122,16 @@ def create_llat_dba_reader(dba_file, timesensor=None, pressuresensor=None, depth
     data = dba['data']
     if 'llat_time' in sensors:
         i = sensors.index('llat_time')
-        good_rows = data[:, i] > 1
-        if data.shape[0] != good_rows.sum():
-            logging.warning('Removing {:} bad early timestamps'.format(data.shape[0] - good_rows.sum()))
+        good_rows = data[:, i] > MIN_TIMESTAMP_ALLOWED
+        bad_rows_count = data.shape[0] - good_rows.sum()
+        if bad_rows_count > 0:
+            logging.warning('Removing {:} invalid early timestamps'.format(bad_rows_count))
             dba['data'] = data[good_rows, :]
 
         good_rows = data[:, i] <= datetime.datetime.utcnow().timestamp()
-        if data.shape[0] != good_rows.sum():
-            logging.warning('Removing {:} bad late timestamps'.format(data.shape[0] - good_rows.sum()))
+        bad_rows_count = data.shape[0] - good_rows.sum()
+        if bad_rows_count > 0:
+            logging.warning('Removing {:} invalid late timestamps'.format(bad_rows_count))
             dba['data'] = data[good_rows, :]
 
     return dba
@@ -336,6 +339,7 @@ def select_time_sensor(dba, timesensor=None):
                 time_sensor['sensor_name'] = 'llat_time'
                 time_sensor['attrs']['source_sensor'] = t
                 time_sensor['attrs']['comment'] = u'Alias for {:s}'.format(t)
+                logging.info('Selected timestamp sensor: {:}'.format(t))
                 break
 
     time_sensor['attrs']['units'] = 'seconds since 1970-01-01 00:00:00Z'
@@ -417,6 +421,7 @@ def select_depth_sensor(dba, depthsensor=None):
                 depth_sensor['sensor_name'] = 'llat_depth'
                 depth_sensor['attrs']['source_sensor'] = d
                 depth_sensor['attrs']['comment'] = u'Alias for {:s}'.format(d)
+                logging.info('Selected pressure sensor: {:}'.format(d))
                 break
 
     if not depth_sensor:
@@ -505,9 +510,9 @@ def derive_ctd_parameters(dba):
             ctd_sensors = ALT_CTD_SENSORS
 
         if not ctd_sensors:
-            logging.warning('Alternate CTD sensors not found in {:s}'.format(dba['file_metadata']['source_file']))
             return dba
         else:
+            logging.warning('Found alternate CTD sensors in {:s}'.format(dba['file_metadata']['source_file']))
             lati = dba_sensors.index(ctd_sensors[0])
             loni = dba_sensors.index(ctd_sensors[1])
             pi = dba_sensors.index(ctd_sensors[2])
