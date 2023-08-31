@@ -93,6 +93,8 @@ def main(args):
                 logging.error('{:s}: {:s}'.format(dba, e))
                 continue
 
+            logging.info('Indexed {:} profiles'.format(len(profile_times)))
+
             # logging.info('{:0.0f} profiles indexed'.format(len(profile_times)))
             if len(profile_times) == 0:
                 continue
