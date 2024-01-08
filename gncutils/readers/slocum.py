@@ -119,20 +119,40 @@ def create_llat_dba_reader(dba_file, timesensor=None, pressuresensor=None, depth
 
     # Remove timestamps = 0 for time_llat
     sensors = [s['sensor_name'] for s in dba['sensors']]
-    data = dba['data']
     if 'llat_time' in sensors:
+        data = dba['data']
         i = sensors.index('llat_time')
+
+        # NaNs
+        logging.info('Checking for NaN timestamps')
+        good_rows = ~np.isnan(data[:, i])
+        bad_rows_count = data.shape[0] - good_rows.sum()
+        if bad_rows_count > 0:
+            logging.warning('Removing {:} NaN timestamps'.format(bad_rows_count))
+            #            dba['data'] = data[good_rows, :]
+            data = data[good_rows, :]
+
+        # Early timestamps
+        logging.info('Checking for invalid past timestamps')
         good_rows = data[:, i] > MIN_TIMESTAMP_ALLOWED
         bad_rows_count = data.shape[0] - good_rows.sum()
         if bad_rows_count > 0:
             logging.warning('Removing {:} invalid early timestamps'.format(bad_rows_count))
-            dba['data'] = data[good_rows, :]
+#            dba['data'] = data[good_rows, :]
+            data = data[good_rows, :]
 
+        # Future timestamps
+        logging.info('Checking for invalid future timestamps')
         good_rows = data[:, i] <= datetime.datetime.utcnow().timestamp()
         bad_rows_count = data.shape[0] - good_rows.sum()
         if bad_rows_count > 0:
             logging.warning('Removing {:} invalid late timestamps'.format(bad_rows_count))
-            dba['data'] = data[good_rows, :]
+#            dba['data'] = data[good_rows, :]
+            data = data[good_rows, :]
+
+
+
+        dba['data'] = data
 
     return dba
 
